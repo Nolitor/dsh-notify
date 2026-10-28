@@ -1,0 +1,76 @@
+{
+  "format": 1,
+  "title": {
+    "en": "Nolit DSH Plugins",
+    "ko": "노릿 DSH 플러그인"
+  },
+  "description": {
+    "en": "Local-first extensions for DeepSeek Harness.",
+    "ko": "DeepSeek Harness용 로컬 우선 확장."
+  },
+  "metadata": {
+    "categories": {
+      "productivity": {
+        "title": {
+          "en": "Productivity",
+          "ko": "생산성"
+        }
+      }
+    },
+    "labels": {
+      "notifications": {
+        "title": {
+          "en": "Notifications",
+          "ko": "알림"
+        }
+      },
+      "stable": {
+        "title": {
+          "en": "Stable",
+          "ko": "안정"
+        }
+      }
+    },
+    "sortKeys": {}
+  },
+  "plugins": [
+    {
+      "name": "@nolit/dsh-notify-web",
+      "title": {
+        "en": "DSH Notify Web",
+        "ko": "DSH 알림 (웹)"
+      },
+      "description": {
+        "en": "Browser-only turn, approval, question, and error notifications. No local app, ports, or files.",
+        "ko": "턴 완료·승인·질문·오류를 브라우저 알림과 소리로 알립니다. 로컬 앱·포트·파일을 사용하지 않습니다."
+      },
+      "icon": "icons/dsh-notify.svg",
+      "author": "nolit",
+      "metadata": {
+        "category": "productivity",
+        "keywords": [
+          "notification",
+          "browser",
+          "web",
+          "web-audio"
+        ],
+        "labels": [
+          "notifications",
+          "stable"
+        ],
+        "sortKeys": {}
+      },
+      "versions": [
+        {
+          "version": "0.1.6",
+          "source": {
+            "type": "npm"
+          },
+          "engines": {
+            "dsh": ">=0.2.2-alpha.2 <0.3.0"
+          }
+        }
+      ]
+    }
+  ]
+}

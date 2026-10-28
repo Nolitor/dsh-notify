@@ -1,0 +1,19 @@
+# DSH Notify Web bundle layer.
+# The package is the bundle; this row activates its no-op Host half. All
+# notification behavior runs in the browser. No local IPC, HTTP, ports, or
+# filesystem access is used.
+- insert:
+    - id: dsh-notify-web
+      name: '@nolit/dsh-notify-web'
+      config:
+        notifyOnComplete: true
+        notifyOnApproval: true
+        notifyOnQuestion: true
+        notifyOnError: true
+        completeCooldownMs: 5000
+        soundEnabled: true
+        soundSource: synth
+        volume: 0.3
+        suppressWhenFocused: false
+        requireInteractionForApproval: true
+        notifyOnSubagents: false

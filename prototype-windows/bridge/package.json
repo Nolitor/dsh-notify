@@ -1,0 +1,14 @@
+{
+  "name": "@local/dsh-notify-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "DeepSeek Harness turn/approval events → Windows toast via DSH Notify",
+  "exports": {
+    ".": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "README.md"
+  ]
+}

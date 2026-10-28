@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "DSH 알림 (웹)",
+    "description": "DeepSeek Harness의 턴 완료·승인·질문·오류를 브라우저 알림과 소리로 알립니다."
+  }
+}
