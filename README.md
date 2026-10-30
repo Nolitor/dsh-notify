@@ -1,6 +1,6 @@
 # DSH Notify Web
 
-> 상태: active · 최종 갱신: 2026-10-29 · 패키지: `@nolit/dsh-notify-web` v0.1.6 · 상위: [README.md](../README.md)
+> 상태: active · 최종 갱신: 2026-10-31 · 패키지: `@nolit/dsh-notify-web` v0.1.7 · 상위: [README.md](../README.md)
 
 DeepSeek Harness의 턴 완료·도구 승인·질문·오류를 **브라우저 알림과 브라우저 소리**로 알리는 웹 전용 플러그인입니다. 로컬 앱, 포트, IPC, 파일 큐, 시스템 의존성이 없습니다.
 
@@ -59,7 +59,7 @@ dsh plugin --profile web add @nolit/dsh-notify-web
 
 ## 3. 설정 위치와 권한
 
-- **설정 → 알림**: DSH 공식 Settings 모달의 `settings.section`에 "알림" 섹션이 추가됩니다. 권한/소리/필터/BYO 오디오/테스트를 모두 여기서 설정합니다.
+- **설정 → 알림**: DSH 공식 Settings 모달의 `settings.section`에 알림 섹션이 추가됩니다(`order: 50`, 에이전트 프리셋 아래·OpenCode v2 위). 탭 이름은 UI 언어를 따릅니다 — 한국어 `알림`, 그 외 `Notifications`(`ctx.locale.getSnapshot()` 기준, 2026-10-31 측정: 하드코딩된 한국어 라벨이 영문 UI에 노출되던 문제 수정). 권한/소리/필터/BYO 오디오/테스트를 모두 여기서 설정합니다.
 - 첫 실제 알림 이벤트에서 권한이 `default`이면 페이지당 1회 자동으로 `requestPermission()`을 시도합니다(Hermes WebUI와 동일한 동작). 브라우저가 사용자 제스처를 요구해 거부하면 화면 토스트·탭 제목·소리로 폴백합니다.
 - 명시적으로 켜려면 페이지 우하단의 일회성 동의 카드에서 **알림 켜기**를 누르면 `requestPermission()`과 `AudioContext.resume()`이 같은 사용자 제스처로 실행됩니다.
 - **나중에**를 누르면 카드가 다시 뜨지 않으며, 이후 Settings → 알림에서 변경할 수 있습니다.
