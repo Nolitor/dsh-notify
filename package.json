@@ -1,6 +1,6 @@
 {
   "name": "@nolit/dsh-notify-web",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Browser-only turn, approval, question, and error notifications for DeepSeek Harness.",
   "license": "MIT",
   "author": "nolit",
@@ -35,7 +35,7 @@
     "@deepseek-ai/cordis": "~4.0.6-alpha.1"
   },
   "scripts": {
-    "test": "node --test test/client.test.mjs"
+    "test": "node --test test/client.test.mjs test/typography.test.mjs"
   },
   "keywords": [
     "dsh",

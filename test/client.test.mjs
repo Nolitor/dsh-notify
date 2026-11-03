@@ -60,7 +60,7 @@ function createIndexedDb() {
   }
 }
 
-function createHarness({ permission = 'granted', rows = {}, config = {}, indexedDB = createIndexedDb() } = {}) {
+function createHarness({ permission = 'granted', rows = {}, config = {}, indexedDB = createIndexedDb(), document: documentOverride = null } = {}) {
   const notifications = []
   const audioStarts = []
   const bufferStarts = []
@@ -139,7 +139,7 @@ function createHarness({ permission = 'granted', rows = {}, config = {}, indexed
   }
 
   const storage = createStorage()
-  const document = {
+  const document = documentOverride ?? {
     hasFocus: () => false,
     visibilityState: 'visible',
     addEventListener() {},
@@ -584,4 +584,79 @@ test('granted permission fires an OS notification without a duplicate in-app toa
   assert.equal(harness.core.getState().lastDelivery.kind, 'complete')
   assert.equal(harness.core.getState().lastDelivery.osShown, true)
   harness.core.stop()
+})
+
+// --- native settings panel (alpha.3 restore) -------------------------------
+
+test('the notifications section renders native settings rows, not inline cards', () => {
+  const harness = createHarness({})
+  const Section = harness.components['settings.section:notifications']
+  assert.equal(typeof Section, 'function')
+  const tree = Section({})
+  const flat = []
+  const walk = (node) => {
+    if (node === null || node === undefined || node === false) return
+    if (Array.isArray(node)) { for (const child of node) walk(child); return }
+    if (typeof node !== 'object') return
+    flat.push(node)
+    if (node.children) for (const child of node.children) walk(child)
+  }
+  walk(tree)
+
+  const classes = new Set(flat.map((n) => n.props?.className).filter(Boolean))
+  // The section is styled by the injected stylesheet, so it must carry the class
+  // hooks the stylesheet targets; a bare inline-styled div would prove a regression.
+  assert.ok(classes.has('dshNbxSection'), 'section root uses the native section class')
+  assert.ok(classes.has('dshNbxCard'), 'groups render as native cards')
+  assert.ok(classes.has('dshNbxRow'), 'options render as native rows')
+  assert.ok(classes.has('dshNbxSwitch'), 'toggles render as native switches')
+
+  // Every toggle is a real switch control with an accessible name.
+  const switches = flat.filter((n) => n.props?.className === 'dshNbxSwitch')
+  assert.ok(switches.length >= 6, 'expected the six notification toggles')
+  for (const sw of switches) assert.ok(sw.props['aria-label'], 'switch needs an accessible label')
+  assert.ok(switches.every((sw) => sw.props.type === 'checkbox'))
+
+  // No inline pixel styling on the row/card chrome: tokens come from the stylesheet.
+  // Layout-only inline styles are fine; chrome (surface, border, corners) must
+  // come from the stylesheet so theming and density keep working. The single
+  // exception is the live status dot, whose background IS its state.
+  const CHROME = ['border', 'borderRadius', 'background', 'boxShadow', 'padding']
+  const styled = flat.filter((n) => n.props?.style && typeof n.props.style === 'object')
+  const offenders = styled.filter((node) => CHROME.some((key) => key in node.props.style))
+  assert.equal(offenders.length, 1, 'only the status dot styles its own chrome')
+  assert.deepEqual(Object.keys(offenders[0].props.style), ['background'], 'the dot sets only its colour')
+  harness.dispose()
+})
+
+test('the injected stylesheet uses DSH design tokens only', () => {
+  const styles = []
+  const harness = createHarness({
+    document: {
+      hasFocus: () => false,
+      visibilityState: 'visible',
+      addEventListener() {},
+      removeEventListener() {},
+      head: { appendChild: (tag) => styles.push(tag) },
+      querySelector: () => null,
+      createElement: () => ({ dataset: {}, textContent: '' }),
+    },
+  })
+  const Section = harness.components['settings.section:notifications']
+  Section({})
+  assert.equal(styles.length, 1, 'one stylesheet per section render')
+  assert.equal(styles[0].dataset.plugin, '@nolit/dsh-notify-web')
+  const css = styles[0].textContent
+  assert.ok(css.includes('var(--dsw-alias-'), 'styles consume DSH alias tokens')
+  assert.ok(css.includes('var(--dsw-radius-'), 'styles consume DSH radius tokens')
+  assert.ok(!css.includes('!important'), 'styles must not use !important')
+  // Hardcoded hex colours would break light/dark theming.
+  const hex = [...new Set(css.match(/#[0-9a-fA-F]{3,6}/g) ?? [])]
+  assert.deepEqual(hex, [], 'every colour must come from a token, including the switch knob')
+  // A token that does not exist at runtime renders as an empty value: the switch
+  // and the primary button would be invisible. Measured 2026-11-03: bg-layer-4
+  // is unset in both themes, and brand-primary is near-white in dark mode.
+  assert.ok(!css.includes('bg-layer-4'), 'bg-layer-4 is unset at runtime')
+  assert.ok(!/background:var\(--dsw-alias-brand-primary\)/.test(css), 'brand-primary is near-white in dark mode and cannot fill a control')
+  harness.dispose()
 })
