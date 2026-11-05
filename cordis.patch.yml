@@ -1,7 +1,7 @@
-# DSH Notify Web bundle layer.
-# The package is the bundle; this row activates its no-op Host half. All
-# notification behavior runs in the browser. No local IPC, HTTP, ports, or
-# filesystem access is used.
+# Notify for Chrome bundle layer.
+# The package is the bundle; this row activates its no-op Host half. Every
+# notification runs through the browser's Chrome / Web Notification API. No
+# local IPC, HTTP, ports, filesystem access, native notifier or audio engine.
 - insert:
     - id: dsh-notify-web
       name: '@nolit/dsh-notify-web'
@@ -11,9 +11,6 @@
         notifyOnQuestion: true
         notifyOnError: true
         completeCooldownMs: 5000
-        soundEnabled: true
-        soundSource: synth
-        volume: 0.3
         suppressWhenFocused: false
         requireInteractionForApproval: true
         notifyOnSubagents: false

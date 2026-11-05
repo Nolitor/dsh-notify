@@ -1,7 +1,7 @@
 {
   "name": "@nolit/dsh-notify-web",
-  "version": "0.1.8",
-  "description": "Browser-only turn, approval, question, and error notifications for DeepSeek Harness.",
+  "version": "0.0.1-rc.2",
+  "description": "Notify for Chrome: Chrome notification alerts for DeepSeek Harness turns, approvals, questions and errors, with a silent in-app toast fallback.",
   "license": "MIT",
   "author": "nolit",
   "type": "module",
@@ -17,31 +17,42 @@
   "files": [
     "lib/index.js",
     "lib/client.js",
+    "lib/client.src.js",
+    "lib/locale-table.js",
+    "scripts/gen-locale.mjs",
+    "scripts/build-client.mjs",
     "cordis.patch.yml",
     "locale/*.json",
     "icon.svg",
     "market/index.json",
     "market/icons/*.svg",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE",
     "test/client.test.mjs",
+    "test/typography.test.mjs",
+    "test/locale.test.mjs",
+    "test/manifest.test.mjs",
     "package.json"
   ],
   "engines": {
-    "node": ">=24",
+    "node": ">=24.9",
     "dsh": ">=0.2.2-alpha.2 <0.3.0"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "~4.0.6-alpha.1"
+    "@deepseek-ai/cordis": "^4.1.0"
   },
   "scripts": {
-    "test": "node --test test/client.test.mjs test/typography.test.mjs"
+    "build": "node scripts/gen-locale.mjs && node scripts/build-client.mjs",
+    "pretest": "npm run build",
+    "test": "node --test test/client.test.mjs test/typography.test.mjs test/locale.test.mjs test/manifest.test.mjs"
   },
   "keywords": [
     "dsh",
     "deepseek-harness",
     "notifications",
-    "web",
+    "chrome",
+    "web-notification",
     "browser"
   ],
   "dsh": {
@@ -54,6 +65,7 @@
       "immediately": true,
       "inject": [
         "@deepseek-ai/dsh-api-remotes",
+        "@deepseek-ai/dsh-client-locale",
         "@deepseek-ai/dsh-client-ui-session",
         "@deepseek-ai/dsh-client-ui-renderer"
       ]

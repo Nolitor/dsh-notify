@@ -1,51 +1,85 @@
 /**
- * Typography contract for the notifications settings section.
+ * Typography and style-isolation contract for Notify for Chrome.
  *
- * The native Settings dialog renders at 14px with 12px descriptions (measured
- * distribution: 14px x20, 12px x11). DSH sets no font-size on <body>, so an
- * unset section root inherits 16px and the section reads visibly larger than
- * the settings around it. Measured 2026-11-03 before the fix: root 16px,
- * buttons 12px.
+ * CORRECTION to the old v1.0 pixel rule (F-41): DSH defines a live, user-
+ * configurable content font size. Measured in the shipped stylesheet and the
+ * theme client (2026-11-05):
+ *
+ *   body{--dsh-content-font-delta:calc(var(--dsh-content-font-size,14px) - 14px);}
+ *   --dsh-content-font-size-secondary:min(calc(var(--dsh-content-font-size,14px) - 1px), ...)
+ *   FONT_SIZE_SPECS.text = { variable: '--dsh-content-font-size', min: 10, max: 22, default: 14 }
+ *
+ * So every size must be a token with the DSH fallback — never a literal px —
+ * and the plugin must not ship a stylesheet, a font family or hardcoded colours.
  */
-import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import test from 'node:test'
+import { fileURLToPath } from 'node:url'
 
-const source = readFileSync(new URL('../lib/client.js', import.meta.url), 'utf8')
+const root = join(dirname(fileURLToPath(import.meta.url)), '..')
+const source = readFileSync(join(root, 'lib', 'client.js'), 'utf8')
 
-test('the section root pins the native settings baseline', () => {
-  const at = source.indexOf('.dshNbxSection{')
-  assert.ok(at > 0, 'section rule must exist')
-  const rule = source.slice(at, source.indexOf('}', at))
-  assert.match(rule, /font-size:14px/, 'section must state 14px like native settings')
-  assert.match(rule, /line-height:22px/, 'section must state the native 22px line height')
-})
-
-test('row titles match the native 14px and descriptions the native 12px', () => {
-  const rule = (name) => {
-    const at = source.indexOf('.' + name + '{')
-    return at > 0 ? source.slice(at, source.indexOf('}', at)) : ''
+test('the plugin ships no stylesheet and injects no CSS into the document', () => {
+  for (const forbidden of ['document.head', 'appendChild', "createElement('style')", 'createElement("style")', 'data-plugin-css', 'textContent = \'']) {
+    assert.equal(source.includes(forbidden), false, 'no self-authored stylesheet: ' + forbidden)
   }
-  assert.match(rule('dshNbxTitle'), /font-size:14px/)
-  assert.match(rule('dshNbxCardTitle'), /font-size:14px/)
-  assert.match(rule('dshNbxDesc'), /font-size:12px/)
+  assert.equal(source.includes('!important'), false)
 })
 
-test('no rule falls back to the 16px default', () => {
-  assert.ok(!/font-size:16px/.test(source), '16px would inherit mismatch back in')
+test('no font-family is ever set (the host and the Korean pack own family)', () => {
+  assert.equal(/fontFamily/.test(source), false, 'use inherit only by not setting a family')
+  assert.equal(/font-family/.test(source), false)
 })
 
-test('headings use the native emphasis weight 500, not 600', () => {
-  // Measured live in the Settings dialog content area:
-  //   native general section -> 14px/400 x15, 12px/400 x10, zero 14px/600
-  //   the notify section    -> 14px/600 x6 before this fix
-  // DSH's emphasis vocabulary for headings and titles is 500 (page H1 20px/500,
-  // card H3 14px/500). A 600 heading reads heavier than every setting around it.
-  for (const name of ['dshNbxHeading', 'dshNbxCardTitle']) {
-    const at = source.indexOf('.' + name + '{')
-    assert.ok(at > 0, name + ' rule must exist')
-    const rule = source.slice(at, source.indexOf('}', at))
-    assert.match(rule, /font-weight:500/, name + ' must use the native 500 weight')
-    assert.ok(!/font-weight:600/.test(rule), name + ' must not use 600')
+test('every font size is a live DSH content-size token', () => {
+  const values = [...source.matchAll(/fontSize:\s*'([^']+)'/g)].map((match) => match[1])
+  assert.ok(values.length >= 2, 'expected the content and secondary typography tokens')
+  for (const value of values) {
+    assert.match(
+      value,
+      /^var\(--dsh-content-font-size(?:-secondary)?, \d+px\)$/,
+      'font size must be the DSH token form with its fallback, got: ' + value,
+    )
   }
+})
+
+test('every line height includes the live DSH delta token', () => {
+  const values = [...source.matchAll(/lineHeight:\s*'([^']+)'/g)].map((match) => match[1])
+  assert.ok(values.length >= 2, 'expected the content and secondary line heights')
+  for (const value of values) {
+    assert.match(
+      value,
+      /^calc\(\d+px \+ var\(--dsh-content-font-delta(?:-secondary)?, 0px\)\)$/,
+      'line height must follow the size delta, got: ' + value,
+    )
+  }
+})
+
+test('no literal pixel font size exists anywhere', () => {
+  assert.equal(/font-size:\s*\d+px/.test(source), false)
+  assert.deepEqual(
+    [...source.matchAll(/fontSize:\s*\d+/g)].map((match) => match[0]),
+    [],
+    'a numeric fontSize cannot follow the user setting',
+  )
+})
+
+test('all colours come from --dsw tokens', () => {
+  const colours = [
+    ...source.matchAll(/(?:^|[\s{,])(?:color|background):\s*'([^']+)'/g),
+  ].map((match) => match[1])
+  assert.ok(colours.length >= 4, 'expected the styles object colour declarations')
+  for (const value of colours) {
+    assert.ok(value.startsWith('var(--dsw-'), 'colour must be a DSH token, got: ' + value)
+  }
+  assert.equal(/#[0-9a-fA-F]{3,8}\b/.test(source), false, 'no hardcoded hex colours')
+  assert.equal(/rgba?\(/.test(source), false, 'no hardcoded rgb() colours')
+})
+
+test('the section never sizes body/html/:root or a bare element via a sheet', () => {
+  // There is no sheet at all now; this guards against reintroducing one.
+  assert.equal(/body\s*\{/.test(source), false)
+  assert.equal(/:root\s*\{/.test(source), false)
 })

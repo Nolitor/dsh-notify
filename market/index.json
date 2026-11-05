@@ -37,12 +37,12 @@
     {
       "name": "@nolit/dsh-notify-web",
       "title": {
-        "en": "DSH Notify Web",
-        "ko": "DSH 알림 (웹)"
+        "en": "Notify for Chrome",
+        "ko": "알림 for 크롬"
       },
       "description": {
-        "en": "Browser-only turn, approval, question, and error notifications. No local app, ports, or files.",
-        "ko": "턴 완료·승인·질문·오류를 브라우저 알림과 소리로 알립니다. 로컬 앱·포트·파일을 사용하지 않습니다."
+        "en": "Chrome notification alerts for turn completion, tool approvals, questions and errors. When Chrome blocks notifications, a silent in-app toast is shown. No local app, ports, files or audio engine.",
+        "ko": "턴 완료·도구 승인·질문·오류를 크롬 알림으로 알립니다. 크롬이 알림을 막으면 소리 없이 인앱 토스트로 대신 알립니다. 로컬 앱·포트·파일·오디오 엔진을 사용하지 않습니다."
       },
       "icon": "icons/dsh-notify.svg",
       "author": "nolit",
@@ -50,9 +50,9 @@
         "category": "productivity",
         "keywords": [
           "notification",
+          "chrome",
           "browser",
-          "web",
-          "web-audio"
+          "web-notification"
         ],
         "labels": [
           "notifications",
@@ -62,7 +62,7 @@
       },
       "versions": [
         {
-          "version": "0.1.8",
+          "version": "0.0.1-rc.2",
           "source": {
             "type": "npm"
           },
