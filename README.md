@@ -8,7 +8,7 @@ updated: 2026-11-05
 summary: Operator manual and behavior contract for Notify for Chrome (Korean: 알림 for 크롬) — Chrome/Web Notification only, silent in-app toast fallback, native DSH settings rows and typography, Windows/install-mode notification branches.
 -->
 
-> Status: active · Updated: 2026-11-05 · Package: `@nolit/dsh-notify-web` v`0.0.1-rc.2` · Korean display name: **알림 for 크롬** · Parent: [README.md](../README.md)
+> Status: active · Updated: 2026-11-06 · Package: `@nolit/dsh-notify-web` v`0.0.1-rc.3` · Korean display name: **알림 for 크롬** · Parent: [README.md](../README.md)
 
 **Notify for Chrome** turns DeepSeek Harness events into **Chrome notifications** (the Web
 Notification API, `new Notification(...)`). It has no native app, no ports, no IPC, no file queue
@@ -37,6 +37,25 @@ and no system notifier. When Chrome cannot show a notification, the plugin falls
   system's own** notification sound.
 
 ## 2. Windows and install-environment behavior
+
+**Which OS does the environment card report?** The **browser's** OS — the machine running the tab
+that shows the notification — not the OS running the `dsh` host process. The two are independent:
+a Windows Chrome can be pointed at a DSH server on Linux (the default remote setup), and the
+notification rules that matter (Action Center persistence, `requireInteraction` support, the
+installed-app branch) are properties of the browser's OS.
+
+The sensitivity is per-platform, measured:
+
+| Browser OS | Installed app | Behaviour |
+|---|---|---|
+| Windows | yes | `requireInteraction: true` for every kind; the app window and Action Center keep them |
+| Windows | no | `requireInteraction` follows the setting, approval/question only |
+| Linux | either | same as the Windows browser tab |
+| macOS | either | `requireInteraction` is not honoured by Chrome, so it stays `false` |
+| Android / other | either | `silent: false`, unique `tag`; no persistence |
+
+Because a value like "Windows" next to a Linux host looks wrong, the row is labelled
+**Browser OS** (브라우저 OS) and carries that explanation inline.
 
 The Chrome notification parameters branch on the **runtime platform** and the **install mode**.
 Platform detection order: DSH's `document.documentElement.dataset.platform` (the native shell sets
@@ -97,7 +116,10 @@ Korean) renders native DSH settings surfaces only:
   colours and surfaces come from `--dsw-*` tokens. The plugin **injects no stylesheet**, sets **no
   font-family** and hardcodes **no pixel font size**.
 
-Settings rows:
+The page is grouped into four cards. The two owner-requested categories (2026-11-06) are the
+**DeepSeek peak timer** and **notifications**, in that order.
+
+**알림 조건 (notification rows)**
 
 | Row | Default | Meaning |
 |---|---|---|
@@ -106,6 +128,46 @@ Settings rows:
 | Hide completion alerts while focused | off | suppress completion while the DSH tab is focused |
 | Keep approval alerts open | on | `requireInteraction` for approval/question where supported (Windows/Linux) |
 | Completion cooldown | 5 s | per-session grouping window |
+
+**딥시크 피크 타이머 (peak timer rows)**
+
+| Row | Default | Meaning |
+|---|---|---|
+| Show peak countdown chip | on | 7-segment `HH:MM:SS` chip in the Session header: green off-peak, red at peak |
+| Announce peak changes | on | Chrome notification + `setAppBadge` when the billing window flips |
+| Show timer on other providers | **off** | also render the chip when the active route is *not* an official DeepSeek route |
+
+### The peak timer only trusts official DeepSeek routes by default
+
+The peak/off-peak clock is a property of **DeepSeek's own API billing**
+([pricing footnote](https://api-docs.deepseek.com/quick_start/pricing)). DeepSeek publishes the
+off-peak discount for its own API; **a different service serving the same model may bill
+differently**, so the timer is a *reference*, not a fact, on any other route.
+
+The plugin therefore gates on the **provider id**, never on a model name:
+
+| Route | Chip by default |
+|---|---|
+| `deepseek-official` (official API-key route) | shown |
+| `deepseek-account` (official account route) | shown |
+| everything else (OpenCode, DeepInfra, Antigravity, any proxy/gateway) | **hidden** |
+
+Those two ids are the ones the official DSH packages register. **Provider ids differ between
+installations** — if your setup exposes the official DeepSeek route under a different id, turn on
+**Show timer on other providers** and the chip appears on every route. The default stays
+conservative because a wrong "50% off" claim is worse than a hidden widget.
+
+The live selection is read from `[data-provider-id][data-model-id]` on the model selector trigger,
+which is the same path DeepInfra's cost chip uses. Nothing is guessed from the model name.
+
+The settings card carries the caveat inline, in the owner's wording (2026-11-06):
+
+> 딥시크는 공식 모델 API에 대해서만 할인을 명시합니다. 같은 모델이라도 다른 제공자는 서비스 요금이
+> 다를 수 있으며 보장하지 않습니다. 그 경우 이 타이머는 참고 사항일 뿐입니다.
+>
+> *DeepSeek states this discount only for its official model API. A different provider may charge
+> differently for the same model, and that is not guaranteed. In that case this timer is a reference
+> only.*
 
 Preferences persist in the browser's `localStorage` under `dsh-notify-web:settings` (version 2).
 They are browser preferences, not Host configuration: the plugin's Host half is intentionally a
@@ -131,9 +193,45 @@ Korean; a locale change switches the next notification and the settings strings 
 
 ## 6. Limitations
 
+### Browser support — Chrome / Chromium required
+
+The plugin is built for **Chrome and Chromium-based browsers** (Edge, Brave, Opera, Vivaldi, Arc).
+Those are the engines where the whole surface below exists at once. **On any other browser, correct
+operation is not guaranteed and is not tested.**
+
+| Capability | Chrome / Chromium | Firefox | Safari |
+|---|---|---|---|
+| `new Notification()` | yes | yes | 16+ only |
+| `badge` / `setAppBadge` | 81+ | no (falls back silently) | no |
+| `navigator.locks` (tab leader) | 69+ | yes | no (localStorage lease fallback) |
+| `requireInteraction` | Windows/Linux | **ignored** | **ignored** |
+| Installed-app notification branch | yes | n/a | n/a |
+
+**The plugin does not detect the browser.** It feature-detects (`Notification`, `isSecureContext`,
+`navigator.locks`, `setAppBadge`) and degrades, but it never claims a browser is supported just
+because it is not Chrome. A non-Chromium browser may look functional while behaving differently —
+for example Firefox accepts `requireInteraction` and ignores it, so an approval alert auto-dismisses
+even though the setting is on.
+
+Recommended minimum: **Chrome 81+** (when `setAppBadge` landed; everything else the plugin uses is
+older). Older Chrome still works, minus the badge channel.
+
+### Security constraints that can stop a notification appearing
+
+These are browser/OS security rules, not plugin bugs. Each one degrades to the **silent in-app
+toast** rather than failing loudly, which is why the toast fallback exists.
+
+| Constraint | What the user sees | Measured behaviour |
+|---|---|---|
+| **Permission not granted** (`default`) | nothing from the OS | `new Notification(...)` **does not throw** — it looks successful and shows nothing. The plugin checks `Notification.permission === 'granted'` *before* constructing, so it routes to the toast instead. |
+| **Permission blocked** (`denied`) | nothing, and no prompt returns | `requestPermission()` resolves `'denied'` immediately; Chrome will not prompt again for the origin. Only the user can undo it in site settings. The plugin hides the Enable button, because a control that cannot work is not shown as a broken one. |
+| **Insecure origin** | nothing | `http://<LAN-IP>:3080` is not a secure context; Chrome refuses OS notifications. Use `https://` or `localhost`. Reported as `insecure`. A self-signed certificate needs to be trusted once in the browser; do **not** browse with certificate errors bypassed — notifications and the peak timer need a genuinely secure context. |
+| **No user gesture** | prompt never appears | `requestPermission()` needs a click. A call on page load is auto-denied; the plugin drives it from the Enable button only. |
+| **OS Do Not Disturb** / Focus Assist | nothing, or a silent banner | The OS owns this; the page cannot override it and cannot detect it. |
+| **Browser-level site mute** | nothing | Silent skip at the Chrome layer; indistinguishable from a delivered notification. |
+| **Tab closed** | nothing | No service-worker backend, so no delivery once the DSH tab is gone. |
+
 - Notifications work **only while the DSH tab is open**. There is no service-worker push backend.
-- The origin must be a **secure context** (HTTPS or `localhost`/`127.0.0.1`). Plain
-  `http://<LAN-IP>:3080` cannot show OS notifications in Chrome; the toast fallback is used.
 - Background-tab throttling, browser notification policy and OS Focus Assist / Do Not Disturb can
   change what is shown.
 - Approval/question notifications do not replace the DSH approval UI; the event handler passes
@@ -141,8 +239,13 @@ Korean; a locale change switches the next notification and the settings strings 
 
 ## 7. Privacy
 
-- No `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource` or local port; no filesystem access.
-- The only storage is the settings object in `localStorage` plus the tab-leader lease key.
+- No `XMLHttpRequest`, `WebSocket`, `EventSource` or local port; no filesystem access.
+- **One network request**: the peak timer fetches the Chinese public-holiday list from
+  `raw.githubusercontent.com/NateScarlet/holiday-cn`. Nothing is sent but the request itself — no
+  prompt, code, session title, token or identifier. The response is cached in `localStorage` for 10
+  days. Disable **Show peak countdown chip** and the request never happens.
+- The only storage is the settings object, the tab-leader lease key and that holiday cache, all in
+  `localStorage`.
 - Notification bodies are fixed copy plus the session title (80 chars max); prompts, code and tool
   arguments are never included.
 - Notification clicks only focus the DSH tab; no external link is opened.

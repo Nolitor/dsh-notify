@@ -4,14 +4,14 @@
 version: 2.0
 kind: report
 status: active
-updated: 2026-11-05
+updated: 2026-11-06
 summary: Engineering history for Notify for Chrome (formerly DSH Notify Web). Seeded from git history on 2026-11-04; entries after that date record what changed, why, and the measured before/after, per docs/RULES.md 6.1.
 -->
 
 > History lives here (owner instruction 2026-11-04). Boot cards and `AGENTS.md` are narrowed to
 > the owner's unfinished asks; they are not a changelog. See [docs/RULES.md](../docs/RULES.md) §6.1.
 
-Current version: `0.0.1-rc.2`
+Current version: `0.0.1-rc.3`
 
 ## Seeded history (from git, before this file existed)
 
@@ -26,6 +26,216 @@ repository history rather than rewritten:
 
 Add newest first. Each entry: what changed, why, and the measured before/after. A change with no
 entry here is not complete.
+
+### 2026-11-06 — `0.0.1-rc.3` — 7-segment peak countdown chip
+
+Owner instruction (translated): *"If the window cannot be force-promoted, strengthen the in-app UI.
+Implement a 7-segment digital countdown floating widget (or fixed chip) inside the DSH screen
+showing DeepSeek off-peak/peak time remaining, reusing the Windows prototype's 7-segment style.
+Green off-peak countdown by default, colour/state change at peak. Background tabs announce the flip
+through the already-verified Chrome notification plus `setAppBadge`."*
+
+Owner decisions in the same turn:
+
+| # | Decision | Applied as |
+|---|---|---|
+| 1 | Makeup workdays are **off-peak** | `treatMakeupAsPeak` does not exist in the browser half; a `isOffDay: false` date returns `{ isPeak: false, reason: 'makeup-workday' }`. The Windows prototype's `true` default is **not** carried over. |
+| 2 | Version `0.0.1.rc3` | `package.json` / `market/index.json` = **`0.0.1-rc.3`** (semver form of the owner's `0.0.1.rc3`). |
+
+#### What was added
+
+- **Peak engine (pure, testable).** `peakDecision`, `peakNextChange`, `peakTimerText`,
+  `peakHolidayIndex`, `beijingDateKey` — a port of the measured Windows provider. Peak windows are
+  the fixed UTC definition (01:00–04:00, 06:00–10:00, Mon–Fri, excluding Chinese public holidays);
+  holiday matching uses the **Beijing calendar day (UTC+8)** because the published dates are State
+  Council local dates.
+- **7-segment chip.** Inline SVG traced from the prototype's geometry (10×18 unit box, 1.9 unit
+  round-cap stroke). No font, no `font-family`, no stylesheet; every stroke is a `--dsw-*` token.
+  Colour is `--dsw-alias-state-success-primary` off-peak and `--dsw-alias-state-error-primary` at
+  peak.
+- **Mount seat.** Registered into `conversation.session.header.utilities` — measured 2026-11-06 as a
+  `list`-kind, `replaceRisk: none` seat already rendering three entries, so an additive cell needs no
+  priority trick. The chip is `order: 10`.
+- **Transition announcement.** On a state flip it reuses the single notification channel (Chrome
+  first, native toast fallback) and sets/clears `setAppBadge` plus a `●` tab-title marker.
+- **Two settings rows**, both defaulted on: *Show peak countdown chip* and *Announce peak changes*.
+  They are declared in `cordis.patch.yml` as well, because the manifest contract requires the patch
+  to configure exactly what the client normalizes.
+
+#### Measured before → after
+
+| Surface | Before (rc.2) | After (rc.3) | Evidence |
+|---|---|---|---|
+| Peak awareness | none (0 references) | decision + countdown + announcement | `lib/client.js`, `test/peak.test.mjs` |
+| Destination slot | none | `conversation.session.header.utilities` (list) | `cordis_inspect_query` live occupancy |
+| Settings keys | 8 | 11 | `DEFAULT_SETTINGS`, `cordis.patch.yml` |
+| Locale keys | 74 per language | 99 per language | `locale/en.json`, `locale/ko.json` |
+| Tests | 51 | 69 | `npm test` |
+| Version | `0.0.1-rc.2` | `0.0.1-rc.3` | `package.json`, `market/index.json` |
+
+#### Bug fix — route gate (owner report, same session)
+
+The chip shipped in this version initially rendered for **every** model route. The owner reported it
+while the session was on `opencode-http-agent`:
+
+> "지금 다른 같은 딥시크이지만 공식이 아닌 딥시크 모델인데 저게 뜨는데? … 공식 모델 쓸때만 보여야
+> 할텐데?"
+
+The peak/off-peak clock is a property of **DeepSeek's own billing**. A gateway, reseller or proxy
+route has its own price sheet, so the chip was stating a price the user was not paying.
+
+**Fix.** The chip, the transition announcement, the tab badge and the title marker now all require an
+official route:
+
+| Surface | Gate |
+|---|---|
+| Chip render | `if (!onOfficialRoute) return null` |
+| `setAppBadge` / tab title `●` | only while an official route is active |
+| Transition notification | `if (!isOfficialDeepSeekProvider(...)) return` |
+
+Official ids, read from the packages that register them (measured 2026-11-06):
+`dsh-llm-deepseek-api-key` -> **`deepseek-official`**, `dsh-llm-deepseek-account` ->
+**`deepseek-account`**.
+
+The live selection is read from `[data-provider-id][data-model-id]` — the attribute pair the model
+selector stamps on its trigger (`dsh-client-ui-model-selection`, `renderModelLabel`, placement
+`trigger`), which is the same read path DeepInfra's cost chip uses. An attribute-filtered
+`MutationObserver` follows route changes; no polling.
+
+Live profile note: `llm-deepseek` is `disabled: true` and the default model is
+`opencode-http-agent / opencode-go/deepseek-v4.1-flash`, so **the chip is correctly hidden in the
+owner's current setup** and appears only after switching to an official route.
+
+#### Settings restructure + opt-in toggle (owner decision, same session)
+
+Owner instruction (translated): *"Add a 'show even when not an official route' toggle as a setting.
+In the Notify for Chrome settings tab, show it as two categories — the DeepSeek peak timer, and
+notifications. Only `deepseek-official` / `deepseek-account` are checked by default; other users'
+ids may differ, so when the option is on, show every other route too; when off, only those two.
+Stay within DSH conventions, and state in the install docs that DeepSeek's discount is declared for
+its own service and other services may differ even for the same model."*
+
+| # | Decision | Applied as |
+|---|---|---|
+| 1 | Two setting categories | The page now renders four cards: **Chrome status**, **알림 조건**, **딥시크 피크 타이머**, **환경**. The peak rows moved out of the notification card into their own. |
+| 2 | Opt-in toggle for other routes | New setting `peakOnAnyProvider`, **default `false`**, row label *Show timer on other providers*. |
+| 3 | Only official ids by default | `peakAppliesToRoute(providerId, settings)` returns the official check unless the toggle is `true`. Used by the chip, the announcement, and the badge/title marker alike. |
+| 4 | State the caveat in the install docs | README §4 gains *The peak timer only trusts official DeepSeek routes by default*, and the settings card carries the same warning inline. |
+
+The caveat as shipped: DeepSeek publishes the off-peak discount for **its own API**; a different
+service serving the same model may bill differently, so the timer is a reference there, not a fact.
+
+`peakAppliesToRoute` accepts only a literal `true` for the opt-in, so a stray truthy string from
+`localStorage` cannot silently widen the gate (asserted in `test/peak.test.mjs`).
+
+#### Copy + order correction (owner report, same session)
+
+Owner instruction (translated): *"Replace it with this wording in settings, and you know it shows
+differently for English and Korean. And swap the peak-timer and notification order."*
+
+| # | Change | Applied as |
+|---|---|---|
+| 1 | Caveat text replaced with the owner's exact sentence | `locale/ko.json` carries the Korean verbatim; `locale/en.json` carries the English translation. Both are baked by `gen-locale.mjs`, so the two languages stay in sync by construction. |
+| 2 | Peak timer card moved **above** notifications | Card order is now: Chrome status → **DeepSeek peak timer** → notifications → environment. |
+
+A defect found while doing this: the **completion-cooldown row** had been left inside the peak card
+when the categories were first split. It belongs to notifications and has been moved back, so the
+peak card now holds only the three peak rows and its caveat.
+
+Owner wording, as shipped (ko):
+
+> 딥시크는 공식 모델 API에 대해서만 할인을 명시합니다. 같은 모델이라도 다른 제공자는 서비스 요금이
+> 다를 수 있으며 보장하지 않습니다. 그 경우 이 타이머는 참고 사항일 뿐입니다.
+
+Verified by rendering the real settings component in Chromium for both locales:
+`[크롬 알림, 딥시크 피크 타이머, 알림 조건, 환경]` and
+`[Chrome notifications, DeepSeek peak timer, When to notify, Environment]`.
+
+#### Label clarification — "Platform" was ambiguous (owner question, same session)
+
+Owner asked what the environment card's **Platform** row means — *"is it the remote platform or the
+local platform that is currently running?"* — because it showed **Windows** while the DSH host runs
+on Linux.
+
+**Measured answer:** it is the **browser's** OS, never the host's.
+
+| Evidence | Result |
+|---|---|
+| `uname -srm` on the host | `Linux 7.1.5-... x86_64` (Pop!_OS 24.04) |
+| `detectPlatform` inputs | `documentElement.dataset.platform`, `navigator.userAgentData.platform`, `navigator.platform`, `navigator.userAgent` — all browser-side |
+| Is the host OS exposed to the client? | **No.** No client Service or `@Remote` method returns the host platform (`terminalController.environment` returns terminal geometry only) |
+| Feeding it a real Linux Chrome UA | `{"platform":"linux","installState":"browser"}` — the detector is correct |
+| So "Windows" on a Linux host means | the Chrome tab itself runs on Windows |
+
+That is the correct value, because every rule the platform feeds is a **browser** property:
+`requireInteraction` support, Action Center persistence, and the installed-app branch.
+
+**Fix (label, not logic).** The row is renamed `Platform` -> **Browser OS** (브라우저 OS) and now
+carries an inline hint: *"The operating system of the machine running this browser tab — not the
+machine running the DSH host. Notification behaviour depends on this one."* The detection code is
+unchanged; it was already right.
+
+Also corrected: an earlier `docs/` note implied the platform was the host's. The README now states
+the browser/host split with the measured per-OS behaviour table.
+
+#### Browser support + security disclosure (owner instruction, same session)
+
+Owner challenge (translated): *"The plugin is Chrome-based, so why care about the OS platform?
+Unless you check the Chrome version... but you should state that operation is not guaranteed outside
+Chrome. And you should document the Chrome security issues too — a popup may not appear because of
+security."*
+
+Correct on both counts.
+
+**A. OS platform was not added by this session.** `detectPlatform` predates it — `git log -S
+"function detectPlatform"` pins it to **00e4eb9 (2026-11-05)**, and the earlier rename was a label
+fix only. It stays because it is load-bearing: four `notificationOptionsFor` branches key on it
+(Windows installed app vs browser tab, `requireInteraction` support, macOS ignoring it). It is not
+decoration.
+
+**B. There was no browser check at all.** Measured: zero `Chrome/`, `Edg/`, `Firefox/`, `Safari/`
+matchers in the shipped code. Feature detection existed (`Notification`, `isSecureContext`,
+`navigator.locks`, `setAppBadge`) but nothing told the user *"this browser is not the target one"*. A
+Firefox tab reported `permission: 'default'` and looked healthy while silently ignoring
+`requireInteraction`.
+
+**Added:** `detectBrowser()` → `chromium | firefox | safari | other`, surfaced in a new **Browser
+support** card in settings with a native `Tag` (Chromium = `success`, anything else = `warning`).
+Edge, Opera and Brave are recognised as Chromium because their UAs keep the `Chrome/` token.
+
+Note the exact-version check the owner floated is deliberately **not** done: the plugin's real
+minimum is `setAppBadge` (Chrome 81), and a version gate that hides the plugin on a working older
+Chrome would be worse than a documented recommendation.
+
+**C. Security constraints documented** (README §6, measured in Chromium 156):
+
+| Constraint | Measured behaviour |
+|---|---|
+| permission `default` | `new Notification(...)` **does not throw** — it looks successful and shows nothing. The plugin checks `permission === 'granted'` *before* constructing, so it routes to the toast. |
+| permission `denied` | `requestPermission()` resolves `'denied'` immediately; Chrome never prompts that origin again. Enable button hidden, because a control that cannot work is not rendered as broken. |
+| insecure origin | no OS notifications on `http://<LAN-IP>`; toast fallback. |
+| no user gesture | `requestPermission()` auto-denied; driven from the Enable button only. |
+| OS Do Not Disturb / Focus Assist, site mute | page cannot override or detect. |
+| tab closed | no service-worker backend, no delivery. |
+
+**D. Four stale README claims fixed** while checking the above:
+
+| Claim | Reality |
+|---|---|
+| "No `fetch`" | the peak timer fetches the holiday list — now disclosed with exactly what is sent (nothing but the request) and how to disable it |
+| privacy list omitted the holiday cache | now lists all three `localStorage` keys |
+| limitations implied notifications degrade transparently | now names the silent-drop cases |
+
+#### Verification
+
+`npm test` → **69/69 pass**. The new suite re-runs the published spec §5 table and asserts case #7
+now expects `false` (makeup workday off-peak), plus the fixed UTC windows, the Beijing-day boundary,
+malformed-payload rejection, the 8-day next-change scan, `HH:MM:SS` clamping, and that the rendered
+SVG carries token colours only.
+
+**Not verified:** a live pixel render inside the DSH GUI. The GUI requires the `dsh web` auth token,
+which is not readable from this session, so the chip has been verified by unit test and by the live
+Slot/Service inspections only.
 
 ### 2026-11-05 — `0.0.1-rc.2` — Chrome-only rewrite, renamed "Notify for Chrome"
 

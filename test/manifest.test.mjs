@@ -4,7 +4,7 @@
  * Owner decisions recorded here:
  *   - the npm package name stays @nolit/dsh-notify-web (renaming it would break
  *     the live profile's `link:` dependency); only the display identity changed;
- *   - the owner's version form 0.0.1.rc2 maps to the semver form 0.0.1-rc.2;
+ *   - the owner's version form 0.0.1.rc3 maps to the semver form 0.0.1-rc.3;
  *   - DSH 0.2.2-rc.1 installs Cordis 4.1.0 and requires Node >= 24.9.
  */
 import assert from 'node:assert/strict'
@@ -26,11 +26,11 @@ test('package name stays @nolit/dsh-notify-web; display identity is Notify for C
   assert.match(pkg.description, /Notify for Chrome/)
 })
 
-test('version is the owner-declared 0.0.1-rc.2 (owner form 0.0.1.rc2)', () => {
-  assert.equal(pkg.version, '0.0.1-rc.2')
+test('version is the owner-declared 0.0.1-rc.3 (owner form 0.0.1.rc3)', () => {
+  assert.equal(pkg.version, '0.0.1-rc.3')
   assert.match(pkg.version, /^\d+\.\d+\.\d+-rc\.\d+$/)
   assert.equal(market.plugins[0].versions[0].version, pkg.version)
-  assert.ok(read('CHANGELOG.md').includes('0.0.1.rc2'), 'CHANGELOG must record the owner-stated form')
+  assert.ok(read('CHANGELOG.md').includes('0.0.1.rc3'), 'CHANGELOG must record the owner-stated form')
 })
 
 test('cordis peer range admits the installed Cordis 4.1.0', () => {

@@ -41,8 +41,8 @@
         "ko": "알림 for 크롬"
       },
       "description": {
-        "en": "Chrome notification alerts for turn completion, tool approvals, questions and errors. When Chrome blocks notifications, a silent in-app toast is shown. No local app, ports, files or audio engine.",
-        "ko": "턴 완료·도구 승인·질문·오류를 크롬 알림으로 알립니다. 크롬이 알림을 막으면 소리 없이 인앱 토스트로 대신 알립니다. 로컬 앱·포트·파일·오디오 엔진을 사용하지 않습니다."
+        "en": "Chrome notification alerts for turn completion, tool approvals, questions and errors. When Chrome blocks notifications, a silent in-app toast is shown. Includes a 7-segment DeepSeek peak/off-peak countdown chip, gated to official DeepSeek routes by default. No local app, ports, files or audio engine.",
+        "ko": "턴 완료·도구 승인·질문·오류를 크롬 알림으로 알립니다. 크롬이 알림을 막으면 소리 없이 인앱 토스트로 대신합니다. 딥시크 피크/오프피크 7세그먼트 카운트다운 칩을 포함하며, 기본값은 공식 딥시크 라우트에서만 표시됩니다. 로컬 앱·포트·파일·오디오 엔진을 사용하지 않습니다."
       },
       "icon": "icons/dsh-notify.svg",
       "author": "nolit",
@@ -52,7 +52,8 @@
           "notification",
           "chrome",
           "browser",
-          "web-notification"
+          "web-notification",
+          "deepseek-pricing"
         ],
         "labels": [
           "notifications",
@@ -62,7 +63,7 @@
       },
       "versions": [
         {
-          "version": "0.0.1-rc.2",
+          "version": "0.0.1-rc.3",
           "source": {
             "type": "npm"
           },

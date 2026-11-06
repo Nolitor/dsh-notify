@@ -404,7 +404,7 @@ test('the environment is detected from the DSH platform dataset and display mode
   const detect = makeApplyHarness({ platform: 'windows' }).module.__test.detectEnvironment
   assert.deepEqual(
     { ...detect({ document: { documentElement: { dataset: { platform: 'win32' } } }, navigator: {} }) },
-    { platform: 'windows', installState: 'browser' },
+    { platform: 'windows', installState: 'browser', browser: 'other' },
   )
   assert.equal(detect({ document: {}, navigator: { userAgentData: { platform: 'macOS' } } }).platform, 'macos')
   assert.equal(detect({ document: {}, navigator: { userAgent: 'Mozilla/5.0 (X11; Linux x86_64)' } }).platform, 'linux')
@@ -412,6 +412,41 @@ test('the environment is detected from the DSH platform dataset and display mode
     detect({ document: {}, navigator: {}, matchMedia: (query) => ({ matches: query.includes('standalone') }) }).installState,
     'installed',
   )
+})
+
+test('the engine family is reported so the UI never implies unsupported browsers work', () => {
+  // Read the detector from a plain module load: makeApplyHarness() installs its
+  // own navigator stub (platform, no userAgent), which would shadow the UAs below.
+  const detect = loadModule().module.__test.detectEnvironment
+  const chrome = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36'
+  assert.equal(detect({ document: {}, navigator: { userAgent: chrome } }).browser, 'chromium')
+  // Real Edge/Opera UAs keep the Chrome/ token and append their own; they do not
+  // replace it. Fixtures must match that or the test proves nothing.
+  assert.equal(
+    detect({ document: {}, navigator: { userAgent: `${chrome} Edg/156.0.0.0` } }).browser,
+    'chromium',
+    'Edge is Chromium',
+  )
+  assert.equal(
+    detect({ document: {}, navigator: { userAgent: `${chrome} OPR/120.0.0.0` } }).browser,
+    'chromium',
+    'Opera is Chromium',
+  )
+  // Brave hides the extra token behind navigator.brave but still sends Chrome/.
+  assert.equal(
+    detect({ document: {}, navigator: { userAgent: chrome, brave: { isBrave: async () => true } } }).browser,
+    'chromium',
+    'Brave is Chromium',
+  )
+  assert.equal(
+    detect({ document: {}, navigator: { userAgent: 'Mozilla/5.0 (X11; Linux x86_64; rv:130.0) Gecko/20100101 Firefox/130.0' } }).browser,
+    'firefox',
+  )
+  assert.equal(
+    detect({ document: {}, navigator: { userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Version/17.0 Safari/605.1.15', vendor: 'Apple Computer, Inc.' } }).browser,
+    'safari',
+  )
+  assert.equal(detect({ document: {}, navigator: {} }).browser, 'other')
 })
 
 // --- behaviour -------------------------------------------------------------

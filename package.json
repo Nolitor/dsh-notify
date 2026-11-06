@@ -1,6 +1,6 @@
 {
   "name": "@nolit/dsh-notify-web",
-  "version": "0.0.1-rc.2",
+  "version": "0.0.1-rc.3",
   "description": "Notify for Chrome: Chrome notification alerts for DeepSeek Harness turns, approvals, questions and errors, with a silent in-app toast fallback.",
   "license": "MIT",
   "author": "nolit",
@@ -34,7 +34,8 @@
     "test/typography.test.mjs",
     "test/locale.test.mjs",
     "test/manifest.test.mjs",
-    "package.json"
+    "package.json",
+    "test/peak.test.mjs"
   ],
   "engines": {
     "node": ">=24.9",
@@ -46,7 +47,7 @@
   "scripts": {
     "build": "node scripts/gen-locale.mjs && node scripts/build-client.mjs",
     "pretest": "npm run build",
-    "test": "node --test test/client.test.mjs test/typography.test.mjs test/locale.test.mjs test/manifest.test.mjs",
+    "test": "node --test test/client.test.mjs test/typography.test.mjs test/locale.test.mjs test/manifest.test.mjs test/peak.test.mjs",
     "docs:index": "node ../scripts/doc-index-track.mjs",
     "docs:check": "node ../scripts/doc-index-track.mjs --check"
   },
