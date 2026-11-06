@@ -1,5 +1,14 @@
 # RECOVERY NOTES — what was restored, how, and what is still missing
 
+<!-- skeleton:
+version: 1.0
+kind: reference
+status: reference
+updated: 2026-10-24
+summary: What was restored into this track, how it was restored, and which pieces are still missing.
+-->
+
+
 > Track: `dsh-plugins/dsh-notify` · recovery date: 2026-10-24 · sources: 8 DSH session logs (see `../PROVENANCE.md`)
 
 This document is the honest gap report for the reconstruction. Nothing below was invented: every

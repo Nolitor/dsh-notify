@@ -1,5 +1,14 @@
 # DSH Notify — 설계 문서
 
+<!-- skeleton:
+version: 1.0
+kind: design
+status: historical
+updated: 2026-10-20
+summary: Original DSH Notify design: goal, scope, and the plugin shape chosen before implementation started.
+-->
+
+
 > 상태: active · 최종 갱신: 2026-10-20 · git: main @ milestone-1 · 상위: [BOOT-CARD.md](BOOT-CARD.md)
 
 - 작성일: 2026-10-20
@@ -171,8 +180,8 @@ provider가 실패하면 그 provider만 건너뛰고 나머지는 계속 돈다
 
 실제 렌더(2배 확대, 어두운 배경 합성):
 
-![PEAK 카드](previews/indicator-alert.png)
-![OFF-PEAK 카드](previews/indicator-ok.png)
+*[이미지: PEAK 카드 — `previews/indicator-alert.png`, 이 저장소에 포함되지 않음]*
+*[이미지: OFF-PEAK 카드 — `previews/indicator-ok.png`, 이 저장소에 포함되지 않음]*
 
 - 표시 모델: `ui\presenter.ps1` (순수) / 카드: `ui\indicator.ps1`
 - 창 없이 렌더 검증: `pwsh -Sta -File ui\render-indicator.ps1 -Severity alert -Out out.png`

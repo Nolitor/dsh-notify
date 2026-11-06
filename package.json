@@ -28,6 +28,7 @@
     "market/icons/*.svg",
     "README.md",
     "CHANGELOG.md",
+    "docs/",
     "LICENSE",
     "test/client.test.mjs",
     "test/typography.test.mjs",
@@ -45,7 +46,9 @@
   "scripts": {
     "build": "node scripts/gen-locale.mjs && node scripts/build-client.mjs",
     "pretest": "npm run build",
-    "test": "node --test test/client.test.mjs test/typography.test.mjs test/locale.test.mjs test/manifest.test.mjs"
+    "test": "node --test test/client.test.mjs test/typography.test.mjs test/locale.test.mjs test/manifest.test.mjs",
+    "docs:index": "node ../scripts/doc-index-track.mjs",
+    "docs:check": "node ../scripts/doc-index-track.mjs --check"
   },
   "keywords": [
     "dsh",

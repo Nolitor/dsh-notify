@@ -1,5 +1,14 @@
 # BOOT CARD — 새 작업창 진입 카드
 
+<!-- skeleton:
+version: 1.0
+kind: boot
+status: historical
+updated: 2026-10-24
+summary: The track-local boot card used when dsh-notify was its own workspace; superseded by workspace bootcards/.
+-->
+
+
 > 상태: final · 최종 갱신: 2026-10-20 · git: main @ milestone-3 · 상위: [WORK-PROTOCOL.md](WORK-PROTOCOL.md)
 
 > 이 카드는 **새 작업창에서 가장 먼저 읽는 문서**다. 여기까지 읽었으면 바로 작업을 시작할 수 있다.

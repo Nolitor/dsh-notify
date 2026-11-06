@@ -1,5 +1,14 @@
 # DSH 하네스 알림 — 기능 스펙
 
+<!-- skeleton:
+version: 1.0
+kind: spec
+status: reference
+updated: 2026-10-23
+summary: Feature spec for DSH harness notifications: which harness events notify, and how delivery is deduplicated.
+-->
+
+
 > 상태: draft · 최종 갱신: 2026-10-20 · git: main @ milestone-2 · 상위: [2026-10-20-dsh-notify-design.md](2026-10-20-dsh-notify-design.md)
 
 DSH(DeepSeek Harness) 작업이 끝났거나, 사람의 승인·답변이 필요할 때 Windows 우하단 알림을 띄운다. **포트·웹서버·데몬 없이** OS 알림 API만 호출한다.

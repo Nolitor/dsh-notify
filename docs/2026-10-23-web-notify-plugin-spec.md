@@ -1,5 +1,14 @@
 # DSH 웹 알림 플러그인 — 단독 구현 사양
 
+<!-- skeleton:
+version: 1.0
+kind: spec
+status: reference
+updated: 2026-10-23
+summary: Standalone implementation spec for the DSH web notification plugin: surfaces, permissions, and delivery rules.
+-->
+
+
 > 상태: proposed · 최종 갱신: 2026-10-23 · git: main @ 70a6606 · 상위: [README.md](../README.md)
 
 - 전환 결정: 윈도우 상주 앱과 DSH 웹 플러그인은 **서로 완전히 독립된 2개 패키지**다.

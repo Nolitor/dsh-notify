@@ -9,7 +9,7 @@ summary: Engineering history for Notify for Chrome (formerly DSH Notify Web). Se
 -->
 
 > History lives here (owner instruction 2026-11-04). Boot cards and `AGENTS.md` are narrowed to
-> the owner's unfinished asks; they are not a changelog. See [docs/RULES.md](../../docs/RULES.md) §6.1.
+> the owner's unfinished asks; they are not a changelog. See [docs/RULES.md](../docs/RULES.md) §6.1.
 
 Current version: `0.0.1-rc.2`
 

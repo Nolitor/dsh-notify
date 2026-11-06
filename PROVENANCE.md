@@ -1,5 +1,14 @@
 # PROVENANCE — dsh-notify track
 
+<!-- skeleton:
+version: 1.0
+kind: reference
+status: reference
+updated: 2026-10-24
+summary: Where the dsh-notify source tree came from: recovery path out of historical DSH session logs and what could not be recovered.
+-->
+
+
 > Workspace track: `dsh-plugins/dsh-notify` · origin: **DSH Notify** (Windows project) · recovery date: 2026-10-24
 
 This directory is **not** a from-scratch reimplementation. It is a physical promotion of a

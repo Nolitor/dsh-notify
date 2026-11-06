@@ -1,5 +1,14 @@
 # DSH Notify 2-패키지 배포·운영 전략 — 기술 검증 및 실행 계획
 
+<!-- skeleton:
+version: 1.0
+kind: report
+status: historical
+updated: 2026-10-23
+summary: Technical review of the two-package deployment and operations strategy for DSH Notify, with the resulting execution plan.
+-->
+
+
 > 상태: proposed · 최종 갱신: 2026-10-23 · git: main @ 8129b54 · 상위: [README.md](../README.md)
 
 - 대상: ① DSH 웹 알림 플러그인(공개 배포 지향), ② 윈도우 오프피크 위젯(포터블 스크립트 배포)

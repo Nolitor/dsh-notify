@@ -1,6 +1,15 @@
 # 웹 알림 플러그인 실운영 마운트 보고서
 
-> 상태: active · 최종 갱신: 2026-10-23 · git: main · 상위: [plugin/README.md](../plugin/README.md)
+<!-- skeleton:
+version: 1.0
+kind: report
+status: historical
+updated: 2026-10-23
+summary: Real-mount report for the web notification plugin: how it was mounted and what the live boot proved.
+-->
+
+
+> 상태: active · 최종 갱신: 2026-10-23 · git: main · 상위: [dsh-notify README](../README.md)
 
 - 실제 프로필: `C:\Users\nolit\.dsh\profiles\web` (`DSH_PROFILE=web`)
 - 플러그인: `@nolit/dsh-notify-web` (`plugin/`, 로컬 링크)

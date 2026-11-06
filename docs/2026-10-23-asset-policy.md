@@ -1,5 +1,14 @@
 # 에셋·상표 라이선스 정책 — BYO(Bring Your Own) 방식
 
+<!-- skeleton:
+version: 1.0
+kind: policy
+status: reference
+updated: 2026-10-23
+summary: Asset and trademark licence policy: bring-your-own assets, what may ship, and what must never be redistributed.
+-->
+
+
 > 상태: active · 최종 갱신: 2026-10-23 · git: main @ 8129b54 · 상위: [README.md](../README.md)
 
 - 목적: 오픈소스 재배포 시 폰트·로고·사운드 라이선스 분쟁을 원천 차단한다.

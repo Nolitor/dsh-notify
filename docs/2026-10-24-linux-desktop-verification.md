@@ -1,5 +1,14 @@
 # 2026-10-24 — Linux/Pop!_OS desktop verification of `@nolit/dsh-notify-web`
 
+<!-- skeleton:
+version: 1.0
+kind: report
+status: measured
+updated: 2026-10-24
+summary: Linux/Pop!_OS desktop verification of @nolit/dsh-notify-web: what was checked and the result of each check.
+-->
+
+
 Target: DSH **0.2.1-rc.3** on Pop!_OS (Ubuntu-based), Node v24.2.0.
 Method: static audit against the real rc.3 install + isolated `DSH_HOME=/tmp/dsh-home-B`
 served on a spare port + headless Chromium (CDP) driving the real page.

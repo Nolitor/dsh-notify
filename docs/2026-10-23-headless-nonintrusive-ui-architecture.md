@@ -1,5 +1,14 @@
 # DSH 알림 웹 플러그인 — 헤드리스 코어 + 비침습 UI 아키텍처
 
+<!-- skeleton:
+version: 1.0
+kind: design
+status: reference
+updated: 2026-10-23
+summary: Headless core plus non-intrusive UI architecture for the notification plugin: the split that keeps delivery silent.
+-->
+
+
 > 상태: proposed · 최종 갱신: 2026-10-23 · git: main @ 8129b54 · 상위: [README.md](../README.md)
 
 - 목적: BYO 에셋·라이선스 정책과 UI 비침습 원칙을 하나의 **단독 웹 플러그인 완성 설계**로 통합한다.

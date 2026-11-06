@@ -1,5 +1,14 @@
 # DeepSeek 과금 구간 인디케이터 — 기능 스펙
 
+<!-- skeleton:
+version: 1.0
+kind: spec
+status: reference
+updated: 2026-10-23
+summary: Feature spec for the DeepSeek billing-window indicator: peak/off-peak boundaries, display, and refresh rules.
+-->
+
+
 > 상태: active · 최종 갱신: 2026-10-20 · git: main @ milestone-1 · 상위: [2026-10-20-dsh-notify-design.md](./2026-10-20-dsh-notify-design.md)
 
 - 상위 문서: [2026-10-20-dsh-notify-design.md](./2026-10-20-dsh-notify-design.md)

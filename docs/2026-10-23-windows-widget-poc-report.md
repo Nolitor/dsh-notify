@@ -1,5 +1,14 @@
 # 윈도우 오프피크 위젯 — Phase 2 PoC 실측 보고서
 
+<!-- skeleton:
+version: 1.0
+kind: report
+status: historical
+updated: 2026-10-23
+summary: Windows off-peak widget Phase-2 proof of concept: what was measured and why the track was not carried forward.
+-->
+
+
 > 상태: proposed · 최종 갱신: 2026-10-23 · git: main @ 8fb5b58 · 상위: [README.md](../README.md)
 
 - 범위: 모듈 A(윈도우 위젯)의 PowerShell 7 기준선, WPF Drag & Drop 폰트 주입, UIPI, `start.cmd` 포터블 실행.

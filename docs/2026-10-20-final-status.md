@@ -1,5 +1,14 @@
 # DSH Notify — 최종 상태와 알려진 문제
 
+<!-- skeleton:
+version: 1.0
+kind: report
+status: historical
+updated: 2026-10-20
+summary: Final state of the first DSH Notify round and the known problems left open at that point.
+-->
+
+
 > 상태: final · 최종 갱신: 2026-10-20 · git: main @ milestone-3 · 상위: [WORK-PROTOCOL.md](WORK-PROTOCOL.md)
 
 이 문서는 "지금 이 버전을 그대로 두고 멈춘다"는 결정에 따라, 현재 동작·구조·한계를 한곳에 정리한 마감 문서다.

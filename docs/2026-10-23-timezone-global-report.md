@@ -1,5 +1,14 @@
 # 글로벌 타임존·중국 공휴일 실측 보고서
 
+<!-- skeleton:
+version: 1.0
+kind: measurement
+status: historical
+updated: 2026-10-23
+summary: Measured global timezone and China public-holiday behaviour behind the DeepSeek peak/off-peak indicator.
+-->
+
+
 > 상태: active · 최종 갱신: 2026-10-23 · git: main · 상위: [deepseek-peak-spec.md](./deepseek-peak-spec.md)
 
 - 대상: `providers/deepseek-peak.ps1`, `ui/presenter.ps1`, `config.ps1`

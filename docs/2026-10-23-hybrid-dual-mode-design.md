@@ -1,5 +1,14 @@
 # DSH Notify 하이브리드 듀얼 모드 — 실측 및 아키텍처 설계 보고서
 
+<!-- skeleton:
+version: 1.0
+kind: design
+status: historical
+updated: 2026-10-23
+summary: Hybrid dual-mode notification design and the measurement that drove it: OS notification first, in-app toast as fallback.
+-->
+
+
 > 상태: proposed · 최종 갱신: 2026-10-23 · git: main @ 70a6606 · 상위: [README.md](../README.md)
 
 - 목적: DSH Notify를 **독립 윈도우 상주 앱 + DSH 브라우저 플러그인**의 하이브리드 듀얼 모드로 전환하기 전, 현재 상태를 실측하고 구현 계약을 확정한다.

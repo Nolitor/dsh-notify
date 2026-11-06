@@ -1,5 +1,14 @@
 # 작업 규약 — GIT FLAG · 헤더/스켈레톤 인덱스
 
+<!-- skeleton:
+version: 1.0
+kind: policy
+status: historical
+updated: 2026-10-23
+summary: Track-local work protocol covering git flags and the header/skeleton index convention; now owned by workspace docs/RULES.md.
+-->
+
+
 > 상태: active · 최종 갱신: 2026-10-20 · git: main @ milestone-1 · 상위: [BOOT-CARD.md](BOOT-CARD.md)
 
 이 문서는 새 작업창이 가장 먼저 따르는 규칙이다. 규칙은 문장으로만 두지 않는다 — `tests\docs-contract.ps1` 이 검사하고, 위반하면 테스트가 빨간불이 된다.
