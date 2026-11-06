@@ -15,6 +15,32 @@ Notification API, `new Notification(...)`). It has no native app, no ports, no I
 and no system notifier. When Chrome cannot show a notification, the plugin falls back to a
 **silent in-app toast**.
 
+## 0. Version numbering — why `0.0.1-rc.3` is not lower than `0.2.1`
+
+The version number went **down** against this project's own history, on purpose. Two separate
+facts explain it, and until 2026-11-06 neither was written down anywhere.
+
+**`0.2.x` was never this plugin's version.** The `v0.2.0` and `v0.2.1` releases belonged to the
+**Windows PowerShell/WPF prototype** (a tray widget polling the DeepSeek billing window). The
+browser plugin lived inside that repository under `plugin/` and happened to carry the same
+number — by accident, not by design.
+
+**The `@nolit` ladder was reset by owner decision on 2026-11-05.** Every `@nolit` package moved
+to one scheme, `0.0.1-rc.N`, in which only the `rc#` moves. `0.1.8` and `0.2.1` are not
+milestones under that scheme; the scheme replaced them.
+
+| Surface | Before | After |
+| :--- | :--- | :--- |
+| Version scheme | per-track, drifting (`0.1.6 → 0.1.7 → 0.1.8 → 0.2.1`) | **`0.0.1-rc.N`** |
+| Package | `@nolit/dsh-notify-web` @ `0.2.1`, nested in `plugin/` | **`@nolit/dsh-notify`** @ `0.0.1-rc.3`, repository root |
+| Repository | Windows prototype at root | plugin at root, prototype preserved in `prototype-windows/` |
+
+The `-web` suffix came from the 2026-10-24 recovery and was never the owner's choice;
+`PROVENANCE.md` documented the package as `@nolit/dsh-notify` the entire time while the files
+said `-web`. The rename is part of `0.0.1-rc.3`.
+
+Version numbers are the owner's decision. An agent must not choose, bump or "stabilise" one.
+
 ## 1. Behavior
 
 | DSH event | Channel |
@@ -284,7 +310,14 @@ typography token contract, and the absence of every removed legacy path.
 
 ---
 
+
 ## 한국어 요약
+
+**버전이 내려간 이유부터**: `0.0.1-rc.3`은 `0.2.1`보다 낮은 것이 아닙니다. `0.2.x`는 이
+플러그인의 버전이 아니라 같은 저장소에 있던 **Windows 프로토타입**의 버전이었고, 2026-11-05
+소유자 결정으로 모든 `@nolit` 패키지가 **`0.0.1-rc.N`** 단일 사다리로 재설정됐습니다.
+`rc#`만 올라갑니다. 패키지명도 `@nolit/dsh-notify-web` → **`@nolit/dsh-notify`** 로
+바뀌었습니다. `-web`은 2026-10-24 복구 당시 붙은 것으로 소유자가 고른 이름이 아니었습니다.
 
 **알림 for 크롬**은 DeepSeek Harness의 턴 완료·도구 승인·질문·오류를 **크롬 알림**(Web
 Notification API)으로 알립니다. 크롬이 알림을 막거나 표시할 수 없으면 **소리 없이 DSH 인앱
