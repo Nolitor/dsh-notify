@@ -1,11 +1,11 @@
-# 2026-10-24 — Linux/Pop!_OS desktop verification of `@nolit/dsh-notify-web`
+# 2026-10-24 — Linux/Pop!_OS desktop verification of `@nolit/dsh-notify`
 
 <!-- skeleton:
 version: 1.0
 kind: report
 status: measured
 updated: 2026-10-24
-summary: Linux/Pop!_OS desktop verification of @nolit/dsh-notify-web: what was checked and the result of each check.
+summary: Linux/Pop!_OS desktop verification of @nolit/dsh-notify: what was checked and the result of each check.
 -->
 
 
@@ -117,7 +117,7 @@ gdbus call --session --dest org.freedesktop.Notifications \
 
 # isolated boot (spare port, killed afterwards)
 rsync -a ~/.dsh/ /tmp/dsh-home-B/
-ln -sfn "$PWD" /tmp/dsh-home-B/profiles/web/node_modules/@nolit/dsh-notify-web
+ln -sfn "$PWD" /tmp/dsh-home-B/profiles/web/node_modules/@nolit/dsh-notify
 DSH_HOME=/tmp/dsh-home-B ~/.local/bin/dsh --profile web \
   --patch /tmp/dsh-home-B/profiles/web/cordis.patch.yml.append.yml \
   --host 127.0.0.1 --port 3098 --no-open

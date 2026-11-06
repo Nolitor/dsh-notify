@@ -486,7 +486,7 @@ plugin/
 
 ### 9.3 패키지 메타
 
-- `name: @nolit/dsh-notify-web`
+- `name: @nolit/dsh-notify`
 - `license: MIT`
 - `dsh.client.platform: 'web'`
 - `dsh.client.immediately: true` (초기 이벤트 누락 최소화)
@@ -500,7 +500,7 @@ plugin/
 dsh plugin --profile web add link:C:\path\to\DSH Notify\plugin
 ```
 
-web 프로필의 `dsh.profile.bundles`에 `@nolit/dsh-notify-web` 추가. DSH Plugins 페이지에서 활성화.
+web 프로필의 `dsh.profile.bundles`에 `@nolit/dsh-notify` 추가. DSH Plugins 페이지에서 활성화.
 
 ---
 

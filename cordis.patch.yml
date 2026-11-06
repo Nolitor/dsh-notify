@@ -4,7 +4,7 @@
 # local IPC, HTTP, ports, filesystem access, native notifier or audio engine.
 - insert:
     - id: dsh-notify-web
-      name: '@nolit/dsh-notify-web'
+      name: '@nolit/dsh-notify'
       config:
         notifyOnComplete: true
         notifyOnApproval: true

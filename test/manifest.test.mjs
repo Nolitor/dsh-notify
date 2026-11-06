@@ -2,7 +2,7 @@
  * Manifest, version and rc.1 compliance contract for Notify for Chrome.
  *
  * Owner decisions recorded here:
- *   - the npm package name stays @nolit/dsh-notify-web (renaming it would break
+ *   - the npm package name stays @nolit/dsh-notify (renaming it would break
  *     the live profile's `link:` dependency); only the display identity changed;
  *   - the owner's version form 0.0.1.rc3 maps to the semver form 0.0.1-rc.3;
  *   - DSH 0.2.2-rc.1 installs Cordis 4.1.0 and requires Node >= 24.9.
@@ -21,8 +21,8 @@ const patch = read('cordis.patch.yml')
 const clientSource = read('lib/client.js')
 const clientSrc = read('lib/client.src.js')
 
-test('package name stays @nolit/dsh-notify-web; display identity is Notify for Chrome', () => {
-  assert.equal(pkg.name, '@nolit/dsh-notify-web')
+test('package name stays @nolit/dsh-notify; display identity is Notify for Chrome', () => {
+  assert.equal(pkg.name, '@nolit/dsh-notify')
   assert.match(pkg.description, /Notify for Chrome/)
 })
 
@@ -64,7 +64,7 @@ test('every declared package file exists on disk', () => {
 
 test('market lists the renamed plugin with the new version and no audio keywords', () => {
   const plugin = market.plugins[0]
-  assert.equal(plugin.name, '@nolit/dsh-notify-web')
+  assert.equal(plugin.name, '@nolit/dsh-notify')
   assert.equal(plugin.title.en, 'Notify for Chrome')
   assert.equal(plugin.title.ko, '알림 for 크롬')
   assert.match(plugin.description.en, /Chrome notification/)

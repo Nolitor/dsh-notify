@@ -12,7 +12,7 @@ summary: Real-mount report for the web notification plugin: how it was mounted a
 > 상태: active · 최종 갱신: 2026-10-23 · git: main · 상위: [dsh-notify README](../README.md)
 
 - 실제 프로필: `C:\Users\nolit\.dsh\profiles\web` (`DSH_PROFILE=web`)
-- 플러그인: `@nolit/dsh-notify-web` (`plugin/`, 로컬 링크)
+- 플러그인: `@nolit/dsh-notify` (`plugin/`, 로컬 링크)
 - 마운트 완료: 2026-10-23 06:0x KST
 
 ## 인덱스
@@ -29,8 +29,8 @@ summary: Real-mount report for the web notification plugin: how it was mounted a
 
 ```text
 C:\Users\nolit\.dsh\profiles\web\package.json
-  dependencies["@nolit/dsh-notify-web"] = "link:C:/Users/nolit/Workspace/projects/DSH Notify/plugin"
-  dsh.profile.bundles += "@nolit/dsh-notify-web"
+  dependencies["@nolit/dsh-notify"] = "link:C:/Users/nolit/Workspace/projects/DSH Notify/plugin"
+  dsh.profile.bundles += "@nolit/dsh-notify"
 ```
 
 `node_modules\@nolit\dsh-notify-web`은 체크아웃 `plugin\`을 가리키는 Junction이다.
@@ -38,7 +38,7 @@ C:\Users\nolit\.dsh\profiles\web\package.json
 
 ```yaml
 - id: dsh-notify-web
-  name: '@nolit/dsh-notify-web'
+  name: '@nolit/dsh-notify'
   config:
     notifyOnComplete: true
     notifyOnApproval: true
@@ -53,7 +53,7 @@ C:\Users\nolit\.dsh\profiles\web\package.json
     notifyOnSubagents: false
 ```
 
-> 요청 표기의 `@local/dsh-notify-web`은 개념적 이름이고, 실제 패키지 ID는 `@nolit/dsh-notify-web`이다.
+> 요청 표기의 `@local/dsh-notify-web`은 개념적 이름이고, 실제 패키지 ID는 `@nolit/dsh-notify`이다.
 > DSH 프로필에는 실제 package.json name으로 등록해야 한다.
 
 ## 2. 런타임 마운트
@@ -83,7 +83,7 @@ DSH Plugins 페이지에서 `DSH 알림 (웹)` 항목의 토글을 **On**으로 
 | 항목 | 결과 |
 |---|---|
 | 프로필 dependency | `link:` Junction 확인 |
-| 번들 목록 | `@nolit/dsh-notify-web` 포함 |
+| 번들 목록 | `@nolit/dsh-notify` 포함 |
 | `dsh --dump-config` | `dsh-notify-web` entry + config 확인 |
 | Plugins 페이지 | `DSH 알림 (웹)` toggle **On** |
 | Settings | `알림` 탭 표시 |
@@ -103,7 +103,7 @@ dsh --dump-config --profile web
 롤백:
 
 ```powershell
-dsh plugin --profile web remove "@nolit/dsh-notify-web"
+dsh plugin --profile web remove "@nolit/dsh-notify"
 # 또는 Plugins 페이지에서 토글 Off
 ```
 

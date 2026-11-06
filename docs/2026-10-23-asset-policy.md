@@ -13,7 +13,7 @@ summary: Asset and trademark licence policy: bring-your-own assets, what may shi
 
 - 목적: 오픈소스 재배포 시 폰트·로고·사운드 라이선스 분쟁을 원천 차단한다.
 - 원칙: **패키지는 에셋을 배포하지 않는다.** 사용자가 직접 주입한 에셋만 로컬에서 사용한다.
-- 적용 대상: `@nolit/dsh-notify-web`(웹 플러그인), 윈도우 오프피크 위젯(포터블 패키지).
+- 적용 대상: `@nolit/dsh-notify`(웹 플러그인), 윈도우 오프피크 위젯(포터블 패키지).
 - 코드 라이선스: MIT ([LICENSE](../LICENSE)).
 
 ## 인덱스

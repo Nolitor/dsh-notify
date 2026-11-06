@@ -70,7 +70,7 @@ but no file-mutating tool calls.
 - Binary assets that were generated or fetched at runtime are not recoverable from logs
   (fonts, ICOs, PNG previews, ding.wav); see `docs/RECOVERY-NOTES.md`.
 
-**Platform-neutral (this package root)** — `@nolit/dsh-notify-web` is a browser-only DSH web
+**Platform-neutral (this package root)** — `@nolit/dsh-notify` is a browser-only DSH web
 plugin: `lib/index.js` is a no-op Host half, all behavior is in `lib/client.js` (Web
 Notification + Web Audio + `localStorage`/`IndexedDB`, no ports, no IPC, no filesystem, no
 bundled audio/fonts/icons). This half is usable on Linux/macOS/Windows in any Chromium-class
@@ -80,7 +80,7 @@ browser and was validated here with Node.js (JSON/ESM parse + `node --test`).
 
 ```
 dsh-notify/
-  package.json          # @nolit/dsh-notify-web (dsh.manifestVersion 1, dsh.client.platform web)
+  package.json          # @nolit/dsh-notify (dsh.manifestVersion 1, dsh.client.platform web)
   cordis.patch.yml      # bundle layer that activates the no-op host half
   lib/index.js          # no-op host half
   lib/client.js         # browser half (notifications, settings section, overlay)

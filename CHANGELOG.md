@@ -1,4 +1,4 @@
-# Changelog — Notify for Chrome (`@nolit/dsh-notify-web`)
+# Changelog — Notify for Chrome (`@nolit/dsh-notify`)
 
 <!-- skeleton:
 version: 2.0
@@ -26,6 +26,42 @@ repository history rather than rewritten:
 
 Add newest first. Each entry: what changed, why, and the measured before/after. A change with no
 entry here is not complete.
+
+### 2026-11-06 — `0.0.1-rc.3` — package renamed to `@nolit/dsh-notify`
+
+Owner instruction: the npm package name must be `@nolit/dsh-notify`. The `-web`
+suffix was never the owner's choice and the owner was never told the package
+carried it.
+
+What the measurement showed, and what had been misreported:
+
+| Claim | Reality |
+| :--- | :--- |
+| `CHANGELOG.md` entry for `0.0.1-rc.2` said the package name was **"Kept `@nolit/dsh-notify`"** | The name on disk was `@nolit/dsh-notify-web` in **every commit** since the repository's first commit `50f50d8` (2026-10-29, v0.1.6). `@nolit/dsh-notify` had **never existed** here: `git log -S'@nolit/dsh-notify"'` returns 0 commits. The "Kept" entry was a false record and is corrected in place. |
+| `PROVENANCE.md` documents the package as `@nolit/dsh-notify` | Also never matched disk. The recovered tree was created as `-web`, so the two disagreed from 2026-10-24 onward and nobody reconciled them. |
+| Release artifacts | `nolit-dsh-notify-web-0.1.6/7/8.tgz`, and the `name` inside each tarball was `@nolit/dsh-notify-web`. |
+
+Renamed surfaces (before → after):
+
+| Surface | Before | After |
+| :--- | :--- | :--- |
+| `package.json` `name` | `@nolit/dsh-notify-web` | **`@nolit/dsh-notify`** |
+| `market/index.json` `plugins[0].name` | `@nolit/dsh-notify-web` | **`@nolit/dsh-notify`** |
+| `cordis.patch.yml` row `name` | `@nolit/dsh-notify-web` | **`@nolit/dsh-notify`** |
+| `lib/client.src.js` module `id` | `@nolit/dsh-notify-web` | **`@nolit/dsh-notify`** |
+| `test/manifest.test.mjs` assertions | `@nolit/dsh-notify-web` | **`@nolit/dsh-notify`** |
+| `scripts/install-notify-live.sh`, `scripts/publish-npm.sh` | `@nolit/dsh-notify-web` | **`@nolit/dsh-notify`** |
+| Docs (track + workspace, 11 files) | `@nolit/dsh-notify-web` | **`@nolit/dsh-notify`** |
+
+Deliberately **not** changed: the `cordis.patch.yml` row **`id: dsh-notify-web`**.
+It is a plugin-row identifier, not the package name, and the owner did not ask
+for it. An earlier attempt in this session changed it to `notify`; that was
+outside the instruction and was reverted before committing.
+
+Version is unchanged at `0.0.1-rc.3`. Version numbers belong to the owner.
+
+Gates after the rename: `npm test` 69/69; `scripts/check-npm-publishable.mjs`
+exit 0; `npm run docs:check` 1,242 links OK.
 
 ### 2026-11-06 — `0.0.1-rc.3` — published to GitHub (`Nolitor/dsh-notify`)
 
@@ -287,7 +323,7 @@ Owner decisions applied (given during the session):
 | 2 | Keep the in-app toast as fallback; remove sound engine / BYO audio / self-authored CSS | Chrome notification is primary; the **native DSH toast** is the silent fallback. Web Audio, the inline beep data URI, `<audio>`, BYO audio upload, IndexedDB audio storage and every sound setting are removed. |
 | 3 | Windows platform detection (option 1): branch only the Chrome-notification parameters, keep the toast | `detectPlatform()` + `detectInstallState()`; `requireInteraction`/`silent`/tag and the permission guidance branch on platform + install mode. Nothing else is Windows-specific. |
 | 4 | Everything visual uses DSH tokens and native settings rows; no own stylesheet | `settings.section` renders native `Switch`/`Button`/`Tag`/`Input`; the fallback renders the native `Toast`; the section icon is the DSH `IconAlarmClockOutlineRegular`; sizes use `--dsh-content-font-*`, colours `--dsw-*`. Zero injected CSS. |
-| 5 | Package name | Kept **`@nolit/dsh-notify-web`** — renaming it would break the live profile's `link:` dependency. Only display identity changed: English **Notify for Chrome**, Korean **알림 for 크롬**. |
+| 5 | Package name | Recorded at the time as "Kept **`@nolit/dsh-notify`**". **This was wrong and is corrected on 2026-11-06:** the name on disk was `@nolit/dsh-notify-web` throughout, and `@nolit/dsh-notify` had never existed in this repository's history (`git log -S'@nolit/dsh-notify"'` → 0 commits). Only display identity changed: English **Notify for Chrome**, Korean **알림 for 크롬**. The package was renamed to `@nolit/dsh-notify` by owner instruction on 2026-11-06. |
 | 6 | rc.1 compliance (lead) | `engines.node` `>=24` → **`>=24.9`**; cordis peer **`~4.0.6-alpha.1` → `^4.1.0`** (the old range excluded the installed Cordis 4.1.0). |
 
 #### Measured before → after

@@ -22,7 +22,7 @@ summary: Standalone implementation spec for the DSH web notification plugin: sur
 | § | 섹션 | 한 줄 요약 |
 |---|---|---|
 | 1 | 아키텍처 결정 | 2개 독립 패키지, 통신 계층 없음 |
-| 2 | 패키지 구조·설치 | `@nolit/dsh-notify-web`, web 프로필, no-op host |
+| 2 | 패키지 구조·설치 | `@nolit/dsh-notify`, web 프로필, no-op host |
 | 3 | DSH 이벤트 계약 | 완료·승인·질문·오류 4종만 |
 | 4 | 알림·오디오 | Notification, Web Audio, 권한 |
 | 5 | 중복·다중 탭 | Web Locks 리더 + 쿨다운 |
@@ -73,7 +73,7 @@ plugin/
 
 ```json
 {
-  "name": "@nolit/dsh-notify-web",
+  "name": "@nolit/dsh-notify",
   "version": "0.1.0",
   "license": "MIT",
   "type": "module",
@@ -106,7 +106,7 @@ plugin/
 ```yaml
 - insert:
     - id: dsh-notify-web
-      name: '@nolit/dsh-notify-web'
+      name: '@nolit/dsh-notify'
       config:
         notifyOnComplete: true
         notifyOnApproval: true
@@ -131,7 +131,7 @@ export function apply() {}
 
 ```js
 window.__ModuleLoader__.load({
-  id: '@nolit/dsh-notify-web',
+  id: '@nolit/dsh-notify',
   factory: (require) => {
     const React = require('react')
     const exports = {}
@@ -145,7 +145,7 @@ window.__ModuleLoader__.load({
 })
 ```
 
-**설치:** web 프로필의 `dsh.profile.bundles`에 `@nolit/dsh-notify-web`을 추가하고, 프로필 `node_modules/@nolit/dsh-notify-web`을 이 폴더에 링크한다. `dsh plugin --profile web add link:<절대경로>`로 의존성을 추가한 뒤 번들 목록에 등록한다. desktop 브리지(`@local/dsh-notify-bridge`)는 이 패키지와 무관하며, 검증 후 별도로 제거한다.
+**설치:** web 프로필의 `dsh.profile.bundles`에 `@nolit/dsh-notify`을 추가하고, 프로필 `node_modules/@nolit/dsh-notify`을 이 폴더에 링크한다. `dsh plugin --profile web add link:<절대경로>`로 의존성을 추가한 뒤 번들 목록에 등록한다. desktop 브리지(`@local/dsh-notify-bridge`)는 이 패키지와 무관하며, 검증 후 별도로 제거한다.
 
 **에셋 정책:** 이 패키지는 폰트/로고/사운드 파일을 번들하지 않는다. 기본 아이콘은 중립 시계 SVG(MIT)이며, 알림에는 아이콘을 지정하지 않는다. 사용자 주입 에셋의 책임 범위는 [에셋·상표 라이선스 정책](2026-10-23-asset-policy.md)을 따른다.
 

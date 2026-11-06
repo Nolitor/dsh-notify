@@ -35,7 +35,7 @@
   },
   "plugins": [
     {
-      "name": "@nolit/dsh-notify-web",
+      "name": "@nolit/dsh-notify",
       "title": {
         "en": "Notify for Chrome",
         "ko": "알림 for 크롬"

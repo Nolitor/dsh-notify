@@ -8,7 +8,7 @@ updated: 2026-11-05
 summary: Operator manual and behavior contract for Notify for Chrome (Korean: 알림 for 크롬) — Chrome/Web Notification only, silent in-app toast fallback, native DSH settings rows and typography, Windows/install-mode notification branches.
 -->
 
-> Status: active · Updated: 2026-11-06 · Package: `@nolit/dsh-notify-web` v`0.0.1-rc.3` · Korean display name: **알림 for 크롬** · Parent: `README.md` in the `dsh-plugins` workspace
+> Status: active · Updated: 2026-11-06 · Package: `@nolit/dsh-notify` v`0.0.1-rc.3` · Korean display name: **알림 for 크롬** · Parent: `README.md` in the `dsh-plugins` workspace
 
 **Notify for Chrome** turns DeepSeek Harness events into **Chrome notifications** (the Web
 Notification API, `new Notification(...)`). It has no native app, no ports, no IPC, no file queue
@@ -82,7 +82,7 @@ a standalone/minimal-ui/fullscreen display mode (or `navigator.standalone`), oth
 
 ## 3. Install
 
-The package name stays `@nolit/dsh-notify-web`; only the **display identity** changed to
+The package name stays `@nolit/dsh-notify`; only the **display identity** changed to
 "Notify for Chrome" / "알림 for 크롬". Renaming the npm package would break the live profile's
 `link:` dependency.
 
@@ -95,7 +95,7 @@ dsh plugin --profile web add "link:/path/to/dsh-plugins/dsh-notify"
 From npm after publishing:
 
 ```bash
-dsh plugin --profile web add @nolit/dsh-notify-web
+dsh plugin --profile web add @nolit/dsh-notify
 ```
 
 The package must be listed in the profile's `dsh.profile.bundles`. Reload the DSH page after
