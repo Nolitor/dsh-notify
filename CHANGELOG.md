@@ -27,6 +27,40 @@ repository history rather than rewritten:
 Add newest first. Each entry: what changed, why, and the measured before/after. A change with no
 entry here is not complete.
 
+### 2026-11-06 — `0.0.1-rc.3` — published to GitHub (`Nolitor/dsh-notify`)
+
+The track had no repository of its own; it lived only as a directory inside the
+`dsh-plugins` superproject, which has no remote. `Nolitor/dsh-notify` existed
+but held the **Windows prototype** with the web plugin nested under `plugin/`
+and an unrelated history (root commit `6f63d06`, no shared objects).
+
+Owner decision: **option C** — replace `main` with this plugin, keeping the
+Windows prototype recoverable.
+
+Measured before → after:
+
+| Surface | Before | After |
+| :--- | :--- | :--- |
+| `Nolitor/dsh-notify` `main` | `aa4dd9c` — Windows prototype at root, plugin in `plugin/` @ `0.2.1` | **`9641ff5`** — this plugin at root @ `0.0.1-rc.3` |
+| History | unrelated to the superproject | 7 commits split from `dsh-notify/` via `git subtree split` |
+| Root tree | `app/ bridge/ build/ core.ps1 ... plugin/` | `CHANGELOG.md LICENSE PROVENANCE.md README.md cordis.patch.yml docs icon.svg lib locale market package.json prototype-windows scripts test` |
+| Windows prototype | at root | preserved under `prototype-windows/` **and** in tag `archive/windows-prototype-v0.2.1` |
+
+Safety net: tag `archive/windows-prototype-v0.2.1` was pushed **before** the
+force-push, so every pre-existing file — including `ui/icons/*.ico`, which
+`docs/RECOVERY-NOTES.md` §3 records as unrecoverable from the session logs —
+stays retrievable. The force-push used `--force-with-lease` against the exact
+commit measured (`aa4dd9c`).
+
+The split was verified faithful: the split branch tree
+(`391c367f235c11e61badb297e8223cb6c1fe4a3f`) is byte-identical to
+`HEAD:dsh-notify`.
+
+Not changed, and why: `docs/` still contains absolute paths (`/home/minami` ×2,
+`C:\Users\nolit` ×16). They sit in measurement and design documents as evidence
+of the defects being reported, so removing them would destroy the record. Runtime
+code (`lib/`, `scripts/`, `locale/`, `market/`) has **zero** absolute paths.
+
 ### 2026-11-06 — `0.0.1-rc.3` — 7-segment peak countdown chip
 
 Owner instruction (translated): *"If the window cannot be force-promoted, strengthen the in-app UI.
