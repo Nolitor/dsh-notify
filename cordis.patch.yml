@@ -3,7 +3,7 @@
 # notification runs through the browser's Chrome / Web Notification API. No
 # local IPC, HTTP, ports, filesystem access, native notifier or audio engine.
 - insert:
-    - id: dsh-notify-web
+    - id: notify
       name: '@nolit/dsh-notify'
       config:
         notifyOnComplete: true
