@@ -140,7 +140,7 @@ Owner decisions in the same turn:
 | Destination slot | none | `conversation.session.header.utilities` (list) | `cordis_inspect_query` live occupancy |
 | Settings keys | 8 | 11 | `DEFAULT_SETTINGS`, `cordis.patch.yml` |
 | Locale keys | 74 per language | 99 per language | `locale/en.json`, `locale/ko.json` |
-| Tests | 51 | 69 | `npm test` |
+| Tests | 51 | 70 | `npm test` |
 | Version | `0.0.1-rc.2` | `0.0.1-rc.3` | `package.json`, `market/index.json` |
 
 #### Bug fix — route gate (owner report, same session)
@@ -296,9 +296,40 @@ Chrome would be worse than a documented recommendation.
 | privacy list omitted the holiday cache | now lists all three `localStorage` keys |
 | limitations implied notifications degrade transparently | now names the silent-drop cases |
 
+#### Bug fix — the chip never rendered (`ReferenceError: doc is not defined`)
+
+Owner report: *"why is your plugin not working?"* Measured after the DeepSeek sign-in was repaired.
+
+The plugin was mounted correctly (`--dump-config` shows the `notify` row with every setting), the
+build was current, and the slot registered. The chip still never appeared.
+
+**Cause.** `makePeakChip` is a UI adapter that lives *outside* `createNotifyCore`. The `doc`
+binding it referenced belongs to the core closure (line 456), so it was out of scope in the
+component. Every render threw:
+
+```
+ReferenceError: doc is not defined
+```
+
+Registration succeeded, so nothing looked broken from the outside — the slot simply painted
+nothing. **Registering is not rendering**, and the post-rc.3 rename (`@nolit/dsh-notify-web` ->
+`@nolit/dsh-notify`, commit `eabc41e`) carried the defect forward unchanged.
+
+**Fix.** The component resolves the document from the browser global itself
+(`typeof document === 'undefined' ? undefined : document`), which is correct for a UI adapter, and
+passes it to `readActiveProvider` / `watchActiveProvider`. The three core-side call sites
+(`peakAnnounce`, `syncBadge`) were already inside the closure and are unchanged.
+
+**Regression test added** so this cannot recur silently: it runs `apply()`, takes the component out
+of the registered slot, calls it, and asserts it does not throw. The previous suite asserted *which
+slot registered*, never that the component survives a render — which is exactly why the bug passed
+69 tests.
+
+`npm test` -> **70/70 pass**.
+
 #### Verification
 
-`npm test` → **69/69 pass**. The new suite re-runs the published spec §5 table and asserts case #7
+`npm test` → **70/70 pass**. The new suite re-runs the published spec §5 table and asserts case #7
 now expects `false` (makeup workday off-peak), plus the fixed UTC windows, the Beijing-day boundary,
 malformed-payload rejection, the 8-day next-change scan, `HH:MM:SS` clamping, and that the rendered
 SVG carries token colours only.

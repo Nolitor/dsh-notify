@@ -331,3 +331,40 @@ test('the setting defaults off in the shipped defaults and the bundle patch', ()
   const patch = readFileSync(new URL('../cordis.patch.yml', import.meta.url), 'utf8')
   assert.match(patch, /^\s+peakOnAnyProvider: false$/m)
 })
+
+// ---------------------------------------------------------------------------
+// Regression: the chip must actually RENDER, not just register.
+//
+// The chip is a UI adapter outside createNotifyCore, so the core's `doc` binding
+// is not in its scope. An earlier revision referenced it anyway, which threw
+// `ReferenceError: doc is not defined` on every render and made the slot appear
+// registered while nothing ever painted. Registering is not rendering.
+// ---------------------------------------------------------------------------
+
+test('the registered chip component renders without a ReferenceError', () => {
+  const slots = {}
+  const ctx = {
+    locale: { getSnapshot: () => ({ active: 'ko' }), subscribe: () => () => {} },
+    logger: { warn() {}, log() {} },
+    remote: { $on: () => () => {} },
+    sessions: { list: { getSnapshot: () => ({ byId: {} }) }, scopeOf: () => undefined },
+    slots: {
+      inject: (key, cb) => {
+        const d = cb()
+        return typeof d === 'function' ? d : () => {}
+      },
+      register: (meta, component) => {
+        slots[meta.name] = component
+        return () => {}
+      },
+    },
+    effect: (fn) => {
+      const d = fn()
+      return typeof d === 'function' ? d : () => {}
+    },
+  }
+  mod.apply(ctx, {})
+  const Chip = slots['conversation.session.header.utilities']
+  assert.ok(Chip, 'the chip must register into the header utilities slot')
+  assert.doesNotThrow(() => Chip({}), 'rendering the chip must not throw')
+})
