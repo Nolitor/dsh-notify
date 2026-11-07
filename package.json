@@ -1,6 +1,6 @@
 {
   "name": "@nolit/dsh-notify",
-  "version": "0.0.1-rc.3",
+  "version": "0.0.1-rc.4",
   "description": "Notify for Chrome: Chrome notification alerts for DeepSeek Harness turns, approvals, questions and errors, with a silent in-app toast fallback.",
   "license": "MIT",
   "author": "nolit",

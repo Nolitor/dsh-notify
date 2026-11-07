@@ -11,7 +11,7 @@ summary: Engineering history for Notify for Chrome (formerly DSH Notify Web). Se
 > History lives here (owner instruction 2026-11-04). Boot cards and `AGENTS.md` are narrowed to
 > the owner's unfinished asks; they are not a changelog. See `docs/RULES.md` §6.1 in the `dsh-plugins` workspace.
 
-Current version: `0.0.1-rc.3`
+Current version: `0.0.1-rc.4`
 
 ## Seeded history (from git, before this file existed)
 
@@ -96,6 +96,32 @@ Not changed, and why: `docs/` still contains absolute paths (`/home/minami` ×2,
 `C:\Users\nolit` ×16). They sit in measurement and design documents as evidence
 of the defects being reported, so removing them would destroy the record. Runtime
 code (`lib/`, `scripts/`, `locale/`, `market/`) has **zero** absolute paths.
+
+### 2026-11-07 — `0.0.1-rc.4` — the chip actually renders
+
+Owner decision (translated): *"The rename back to the original name is settled, and so is the
+version. Stop treating the older versions as live: the current state is canonical and the path
+changed. The only part you may change is the number after `rc`, so make it `rc.4` and publish
+through the deploy harness."*
+
+`0.0.1-rc.3` was published to npm and GitHub with a defect that made the peak chip dead. This
+release is the corrected build.
+
+| Surface | `0.0.1-rc.3` (published) | `0.0.1-rc.4` |
+| :--- | :--- | :--- |
+| Peak chip | slot registered, **never painted** (`ReferenceError: doc is not defined` on every render) | renders |
+| Engine id | `0.0.1-rc.3` | `0.0.1-rc.4` |
+
+**Root cause.** `makePeakChip` is a UI adapter outside `createNotifyCore`, so the core's `doc`
+binding was out of scope. Registration succeeded, which is why the failure was invisible: the slot
+simply rendered nothing. Fixed by resolving the document from the browser global inside the
+component. Full detail is in the 2026-11-07 entry below.
+
+**Verification.** `npm test` 70/70, including a new regression test that renders the registered
+component and asserts it does not throw. `0.0.1-rc.3` is superseded; it is not a valid install
+target.
+
+Owner-stated version form: **`0.0.1.rc4`**.
 
 ### 2026-11-06 — `0.0.1-rc.3` — 7-segment peak countdown chip
 

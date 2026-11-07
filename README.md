@@ -8,14 +8,14 @@ updated: 2026-11-05
 summary: Operator manual and behavior contract for Notify for Chrome (Korean: 알림 for 크롬) — Chrome/Web Notification only, silent in-app toast fallback, native DSH settings rows and typography, Windows/install-mode notification branches.
 -->
 
-> Status: active · Updated: 2026-11-06 · Package: `@nolit/dsh-notify` v`0.0.1-rc.3` · Korean display name: **알림 for 크롬** · Parent: `README.md` in the `dsh-plugins` workspace
+> Status: active · Updated: 2026-11-07 · Package: `@nolit/dsh-notify` v`0.0.1-rc.4` · Korean display name: **알림 for 크롬** · Parent: `README.md` in the `dsh-plugins` workspace
 
 **Notify for Chrome** turns DeepSeek Harness events into **Chrome notifications** (the Web
 Notification API, `new Notification(...)`). It has no native app, no ports, no IPC, no file queue
 and no system notifier. When Chrome cannot show a notification, the plugin falls back to a
 **silent in-app toast**.
 
-## 0. Version numbering — why `0.0.1-rc.3` is not lower than `0.2.1`
+## 0. Version numbering — why `0.0.1-rc.4` is not lower than `0.2.1`
 
 The version number went **down** against this project's own history, on purpose. Two separate
 facts explain it, and until 2026-11-06 neither was written down anywhere.
@@ -32,12 +32,12 @@ milestones under that scheme; the scheme replaced them.
 | Surface | Before | After |
 | :--- | :--- | :--- |
 | Version scheme | per-track, drifting (`0.1.6 → 0.1.7 → 0.1.8 → 0.2.1`) | **`0.0.1-rc.N`** |
-| Package | `@nolit/dsh-notify-web` @ `0.2.1`, nested in `plugin/` | **`@nolit/dsh-notify`** @ `0.0.1-rc.3`, repository root |
+| Package | `@nolit/dsh-notify-web` @ `0.2.1`, nested in `plugin/` | **`@nolit/dsh-notify`** @ `0.0.1-rc.4`, repository root |
 | Repository | Windows prototype at root | plugin at root, prototype preserved in `prototype-windows/` |
 
 The `-web` suffix came from the 2026-10-24 recovery and was never the owner's choice;
 `PROVENANCE.md` documented the package as `@nolit/dsh-notify` the entire time while the files
-said `-web`. The rename is part of `0.0.1-rc.3`.
+said `-web`. The rename landed in `0.0.1-rc.3`; `0.0.1-rc.4` is the corrected build.
 
 Version numbers are the owner's decision. An agent must not choose, bump or "stabilise" one.
 
@@ -313,7 +313,7 @@ typography token contract, and the absence of every removed legacy path.
 
 ## 한국어 요약
 
-**버전이 내려간 이유부터**: `0.0.1-rc.3`은 `0.2.1`보다 낮은 것이 아닙니다. `0.2.x`는 이
+**버전이 내려간 이유부터**: `0.0.1-rc.4`는 `0.2.1`보다 낮은 것이 아닙니다. `0.2.x`는 이
 플러그인의 버전이 아니라 같은 저장소에 있던 **Windows 프로토타입**의 버전이었고, 2026-11-05
 소유자 결정으로 모든 `@nolit` 패키지가 **`0.0.1-rc.N`** 단일 사다리로 재설정됐습니다.
 `rc#`만 올라갑니다. 패키지명도 `@nolit/dsh-notify-web` → **`@nolit/dsh-notify`** 로
