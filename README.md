@@ -8,14 +8,14 @@ updated: 2026-11-05
 summary: Operator manual and behavior contract for Notify for Chrome (Korean: 알림 for 크롬) — Chrome/Web Notification only, silent in-app toast fallback, native DSH settings rows and typography, Windows/install-mode notification branches.
 -->
 
-> Status: active · Updated: 2026-11-07 · Package: `@nolit/dsh-notify` v`0.0.1-rc.4` · Korean display name: **알림 for 크롬** · Parent: `README.md` in the `dsh-plugins` workspace
+> Status: active · Updated: 2026-11-07 · Package: `@nolit/dsh-notify` v`0.0.1-rc.6` · Korean display name: **알림 for 크롬** · Parent: `README.md` in the `dsh-plugins` workspace
 
 **Notify for Chrome** turns DeepSeek Harness events into **Chrome notifications** (the Web
 Notification API, `new Notification(...)`). It has no native app, no ports, no IPC, no file queue
 and no system notifier. When Chrome cannot show a notification, the plugin falls back to a
 **silent in-app toast**.
 
-## 0. Version numbering — why `0.0.1-rc.4` is not lower than `0.2.1`
+## 0. Version numbering — why `0.0.1-rc.6` is not lower than `0.2.1`
 
 The version number went **down** against this project's own history, on purpose. Two separate
 facts explain it, and until 2026-11-06 neither was written down anywhere.
@@ -26,18 +26,18 @@ browser plugin lived inside that repository under `plugin/` and happened to carr
 number — by accident, not by design.
 
 **The `@nolit` ladder was reset by owner decision on 2026-11-05.** Every `@nolit` package moved
-to one scheme, `0.0.1-rc.N`, in which only the `rc#` moves. `0.1.8` and `0.2.1` are not
+to one scheme, `0.0.1-rc.N`, in which only the `0.0.1-rc.6` moves. `0.1.8` and `0.2.1` are not
 milestones under that scheme; the scheme replaced them.
 
 | Surface | Before | After |
 | :--- | :--- | :--- |
 | Version scheme | per-track, drifting (`0.1.6 → 0.1.7 → 0.1.8 → 0.2.1`) | **`0.0.1-rc.N`** |
-| Package | `@nolit/dsh-notify-web` @ `0.2.1`, nested in `plugin/` | **`@nolit/dsh-notify`** @ `0.0.1-rc.4`, repository root |
+| Package | `@nolit/dsh-notify-web` @ `0.2.1`, nested in `plugin/` | **`@nolit/dsh-notify`** @ `0.0.1-rc.6`, repository root |
 | Repository | Windows prototype at root | plugin at root, prototype preserved in `prototype-windows/` |
 
 The `-web` suffix came from the 2026-10-24 recovery and was never the owner's choice;
 `PROVENANCE.md` documented the package as `@nolit/dsh-notify` the entire time while the files
-said `-web`. The rename landed in `0.0.1-rc.3`; `0.0.1-rc.4` is the corrected build.
+said `-web`. The rename landed in `0.0.1-rc.6`; `0.0.1-rc.6` is the corrected build.
 
 Version numbers are the owner's decision. An agent must not choose, bump or "stabilise" one.
 
@@ -46,7 +46,7 @@ Version numbers are the owner's decision. An agent must not choose, bump or "sta
 | DSH event | Channel |
 |---|---|
 | `api-session/status` (`running=false`) | Chrome notification "Turn complete", root sessions only, 5 s cooldown |
-| `api-session/error` | Chrome notification "Turn failed", message truncated to 160 chars |
+| `api-session/error` | Chrome notification "Turn failed", message truncated to 160 chars; suppresses the completion its own idle transition would raise |
 | `approval/request` | Chrome notification "Approval needed"; `next()` passes through immediately |
 | `user-questions/request` | Chrome notification "Question waiting"; `next()` passes through immediately |
 
@@ -58,6 +58,12 @@ Version numbers are the owner's decision. An agent must not choose, bump or "sta
   channel, and no title-bar marker.
 - **One tab delivers.** Multiple tabs elect a leader (Web Locks, localStorage lease fallback) so an
   event is not announced once per tab. A focused tab always delivers.
+- **One alert per turn.** The host reports a failure and the idle transition it causes as two
+  separate events (`agent/error`, then `agent/status` → `api-session/status(false)`). A delivered
+  "Turn failed" alert therefore suppresses the "Turn complete" that would echo the same failed turn
+  for the cooldown window, per session. The suppression is consumed by that one transition — the
+  next turn that actually runs and finishes still notifies — and setting the cooldown to `0`
+  disables it.
 - **No sound engine.** The plugin never synthesizes audio, never ships or stores audio, and never
   uses `<audio>`/Web Audio/IndexedDB. When the OS notification has a sound, it is the **operating
   system's own** notification sound.
@@ -205,13 +211,12 @@ Guidance rules:
 - **Denied / insecure / unsupported** → the Enable button is **hidden** (a capability that is gone
   is not shown as a broken control); the row explains what to change, and the test action still
   exercises the toast fallback.
-
 ## 5. Localization
 
 English is the default. Korean is used **only** while the host locale (`ctx.locale.active`) is
 Korean; a locale change switches the next notification and the settings strings live.
 
-- Source of truth: [`locale/en.json`](locale/en.json) and [`locale/ko.json`](locale/ko.json).
+- Sourc of truth: [`locale/en.json`](locale/en.json) and [`locale/ko.json`](locale/ko.json).
 - `scripts/gen-locale.mjs` bakes them into `lib/locale-table.js`; `scripts/build-client.mjs` inlines
   that table into `lib/client.js` (the browser loader cannot import JSON).
 - No hardcoded Korean exists outside the baked dictionary (a test enforces this).
@@ -265,7 +270,7 @@ toast** rather than failing loudly, which is why the toast fallback exists.
 
 ## 7. Privacy
 
-- No `XMLHttpRequest`, `WebSocket`, `EventSource` or local port; no filesystem access.
+- No `XMLHttpRequest`, `WebSocket`, `EventSourc` or local port; no filesystem access.
 - **One network request**: the peak timer fetches the Chinese public-holiday list from
   `raw.githubusercontent.com/NateScarlet/holiday-cn`. Nothing is sent but the request itself — no
   prompt, code, session title, token or identifier. The response is cached in `localStorage` for 10
@@ -313,10 +318,10 @@ typography token contract, and the absence of every removed legacy path.
 
 ## 한국어 요약
 
-**버전이 내려간 이유부터**: `0.0.1-rc.4`는 `0.2.1`보다 낮은 것이 아닙니다. `0.2.x`는 이
+**버전이 내려간 이유부터**: `0.0.1-rc.6`는 `0.2.1`보다 낮은 것이 아닙니다. `0.2.x`는 이
 플러그인의 버전이 아니라 같은 저장소에 있던 **Windows 프로토타입**의 버전이었고, 2026-11-05
 소유자 결정으로 모든 `@nolit` 패키지가 **`0.0.1-rc.N`** 단일 사다리로 재설정됐습니다.
-`rc#`만 올라갑니다. 패키지명도 `@nolit/dsh-notify-web` → **`@nolit/dsh-notify`** 로
+`0.0.1-rc.6`만 올라갑니다. 패키지명도 `@nolit/dsh-notify-web` → **`@nolit/dsh-notify`** 로
 바뀌었습니다. `-web`은 2026-10-24 복구 당시 붙은 것으로 소유자가 고른 이름이 아니었습니다.
 
 **알림 for 크롬**은 DeepSeek Harness의 턴 완료·도구 승인·질문·오류를 **크롬 알림**(Web

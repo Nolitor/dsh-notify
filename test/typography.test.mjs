@@ -83,3 +83,27 @@ test('the section never sizes body/html/:root or a bare element via a sheet', ()
   assert.equal(/body\s*\{/.test(source), false)
   assert.equal(/:root\s*\{/.test(source), false)
 })
+
+// --- 2026-11-11 regression gate ------------------------------------------------
+// The 2026-11-08 settings-card alignment (d9d0d47) shipped the hairline as a
+// `0.5px` literal, which ignores the host's device-pixel-ratio correction. This
+// section has no stylesheet: its styles live in a style object, so the gate
+// matches both the string form and the sheet form.
+
+test('REGRESSION GATE: no .5px hairline literal exists in any style declaration', () => {
+  // A bare literal is any .5px NOT written as the host token's own fallback
+  // (the host bundle itself declares `var(--dsh-hairline-width, .5px)`).
+  const literals = source.match(/(?<!var\(--dsh-hairline-width,)\\\.5px/g) ?? []
+  assert.deepEqual(
+    literals,
+    [],
+    'hairline width must consume the host token with its .5px fallback, never a bare .5px literal',
+  )
+})
+
+test('REGRESSION GATE: the root section keeps Korean words together', () => {
+  const section = source.slice(source.indexOf('section: {'))
+  const root = section.slice(0, section.indexOf('},'))
+  assert.match(root, /wordBreak: 'keep-all'/, 'the root must wrap on word boundaries (CJK)')
+  assert.match(root, /overflowWrap: 'break-word'/, 'the root must still break a single long token')
+})

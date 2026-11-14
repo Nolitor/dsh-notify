@@ -239,6 +239,10 @@ function emitStatus(harness, sessionId = 's1') {
   harness.handlers['api-session/status'](sessionId, false)
 }
 
+function emitError(harness, sessionId = 's1', message = 'boom') {
+  harness.handlers['api-session/error'](sessionId, message)
+}
+
 function emitApproval(harness, key = 'a-1', scope = { sessionId: 's1' }) {
   harness.handlers['approval/request'].call(scope, { callId: key }, () => {
     harness.nextCalls.approval += 1
@@ -456,6 +460,68 @@ test('completion cooldown groups repeated events for one session', () => {
   emitStatus(harness, 's1')
   emitStatus(harness, 's1')
   assert.equal(harness.notifications.length, 1)
+  harness.dispose()
+})
+
+test('an error followed by the host status(false) alerts once, not twice', () => {
+  // Measured host order (dsh-agent-loop): throwError() emits agent/error, then
+  // the same driver's finally block commits the idle phase, which the session
+  // controller relays as api-session/status(sessionId, false). One failed turn
+  // must therefore produce one "Turn failed" alert and no "Turn complete".
+  const harness = makeApplyHarness({ permission: 'granted' })
+  emitError(harness, 's1', 'boom')
+  emitStatus(harness, 's1')
+  assert.equal(harness.notifications.length, 1, 'the idle transition must not echo the failure')
+  assert.equal(harness.notifications[0].title, 'Turn failed')
+  assert.equal(
+    harness.notifications.some((item) => item.title === 'Turn complete'),
+    false,
+    'a failed turn is never announced as complete',
+  )
+  harness.dispose()
+})
+
+test('the error suppression is consumed, so the next real turn still notifies', () => {
+  const harness = makeApplyHarness({ permission: 'granted' })
+  emitError(harness, 's1', 'boom')
+  emitStatus(harness, 's1')
+  assert.equal(harness.notifications.length, 1, 'the failure is announced once')
+  // A new turn starts and finishes normally afterwards.
+  harness.handlers['api-session/status']('s1', true)
+  emitStatus(harness, 's1')
+  assert.equal(harness.notifications.length, 2, 'a later successful turn is not swallowed')
+  assert.equal(harness.notifications.at(-1).title, 'Turn complete')
+  harness.dispose()
+})
+
+test('a disabled error alert does not suppress the following completion', () => {
+  // The suppression is armed only by a delivered error alert: if the user turned
+  // "Turn error" off, nothing explained the failure and the completion must speak.
+  const harness = makeApplyHarness({ permission: 'granted' })
+  harness.core.actions.setSetting('notifyOnError', false)
+  emitError(harness, 's1', 'boom')
+  emitStatus(harness, 's1')
+  assert.equal(harness.notifications.length, 1)
+  assert.equal(harness.notifications[0].title, 'Turn complete')
+  harness.dispose()
+})
+
+test('the suppression is per session and does not leak across sessions', () => {
+  const harness = makeApplyHarness({ permission: 'granted' })
+  emitError(harness, 's1', 'boom')
+  emitStatus(harness, 's2')
+  assert.equal(harness.notifications.length, 2, 'another session still reports its own completion')
+  assert.equal(harness.notifications[0].title, 'Turn failed')
+  assert.equal(harness.notifications[1].title, 'Turn complete')
+  harness.dispose()
+})
+
+test('a zero cooldown disables the error suppression', () => {
+  const harness = makeApplyHarness({ permission: 'granted' })
+  harness.core.actions.setSetting('completeCooldownMs', 0)
+  emitError(harness, 's1', 'boom')
+  emitStatus(harness, 's1')
+  assert.equal(harness.notifications.length, 2, 'the owner turned grouping off, so both events speak')
   harness.dispose()
 })
 
